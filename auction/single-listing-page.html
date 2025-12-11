@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BidHub | Listing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="View details of a single auction listing on BidHub. See images, description, and bid history, then log in with your Noroff student account to place a bid."
+    />
+    <meta name="author" content="Your Name" />
+
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <!-- NAVBAR (logged out, Auctions active) -->
+    <nav class="navbar bh-navbar fixed-top">
+      <div class="container d-flex align-items-center">
+        <!-- Logo -->
+        <a
+          href="../index.html"
+          class="navbar-brand d-flex align-items-center bh-navbar-logo"
+        >
+          <img
+            src="../img/bidhub_logo_transparent.png"
+            alt="BidHub logo"
+            class="bh-logo-img me-2"
+          />
+          <span class="visually-hidden">BidHub</span>
+        </a>
+
+        <!-- Center nav -->
+        <ul class="nav mx-auto gap-3">
+          <li class="nav-item">
+            <a href="../index.html" class="nav-link bh-nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="./auctions.html" class="nav-link bh-nav-link active">
+              Auctions
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right: auth buttons -->
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <a href="../auth/login.html" class="bh-btn-outline">Login</a>
+          <a href="../auth/register.html" class="bh-btn-primary">Register</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="bh-page">
+      <div class="container">
+        <!-- Heading + meta (like Figma) -->
+        <header class="mb-3" id="listing-header">
+          <!-- JS will inject title + pill + meta here -->
+        </header>
+
+        <!-- Main layout -->
+        <section id="single-listing-root"></section>
+      </div>
+    </main>
+
+    <!-- FOOTER (same style as landing) -->
+    <footer class="bh-footer">
+      <div class="container">
+        <div class="row gy-4 pb-3">
+          <!-- Brand -->
+          <div class="col-md-3">
+            <h2 class="h5 mb-2 bh-footer-title">BidHub</h2>
+            <p class="small mb-0 bh-footer-text">
+              A student-focused auction platform for buying and selling with
+              credits.
+            </p>
+          </div>
+
+          <!-- Explore -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Explore</h3>
+            <ul class="list-unstyled small mb-0">
+              <li>
+                <a class="bh-footer-link" href="./auctions.html">Auctions</a>
+              </li>
+              <li>
+                <a class="bh-footer-link" href="../profile/my-listings.html">
+                  My listings
+                </a>
+              </li>
+              <li>
+                <a class="bh-footer-link" href="../profile/my-bids.html">
+                  My bids
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Account -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Account</h3>
+            <ul class="list-unstyled small mb-0">
+              <li>
+                <a class="bh-footer-link" href="../auth/login.html">Log in</a>
+              </li>
+              <li>
+                <a class="bh-footer-link" href="../auth/register.html">
+                  Register
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Help -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Help</h3>
+            <ul class="list-unstyled small mb-0">
+              <li><a class="bh-footer-link" href="#">Support</a></li>
+              <li><a class="bh-footer-link" href="#">Terms</a></li>
+              <li><a class="bh-footer-link" href="#">Privacy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="small mb-0 bh-footer-text">© 2025 BidHub.</p>
+      </div>
+    </footer>
+
+    <!-- JS -->
+    <script type="module" src="../js/main.js"></script>
+    <script type="module" src="../js/auction/single-listing-page.js"></script>
+  </body>
+</html>

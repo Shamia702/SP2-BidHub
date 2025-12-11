@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <title>BidHub | Student auctions for Noroff</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="BidHub is a student-focused auction platform for Noroff students. Browse live auctions, create listings, and bid using credits instead of cash."
+  />
+   <meta name="author" content="Shamia" />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <!-- NAVBAR (logged out) -->
+    <nav class="navbar bh-navbar fixed-top">
+  <div class="container d-flex align-items-center">
+    <!-- Left: logo -->
+    <a
+      href="./index.html"
+      class="navbar-brand d-flex align-items-center bh-navbar-logo"
+    >
+      <img
+        src="./img/bidhub_logo_transparent.png"
+        alt="BidHub logo"
+        class="bh-logo-img me-2"
+      />
+      <span class="visually-hidden">BidHub</span>
+    </a>
+
+    <!-- Center: nav links -->
+    <ul class="nav mx-auto gap-3">
+      <li class="nav-item">
+        <a href="./index.html" class="nav-link bh-nav-link active">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="./auction/auctions.html" class="nav-link bh-nav-link">
+          Auctions
+        </a>
+      </li>
+    </ul>
+
+    <!-- Right: auth buttons -->
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a href="./auth/login.html" class="bh-btn-outline">Login</a>
+      <a href="./auth/register.html" class="bh-btn-primary">Register</a>
+    </div>
+  </div>
+</nav>
+
+
+    <!-- MAIN -->
+    <main class="bh-page">
+      <div class="container">
+        <!-- HERO CARD (big white card) -->
+        <section class="bh-hero-section">
+          <div class="bh-card bh-hero-card p-4 p-lg-5">
+            <div class="row align-items-center gy-4">
+              <!-- Left: text + buttons -->
+              <div class="col-lg-7">
+                <h1 class="mb-3">
+                  Discover unique student auctions<br />
+                  on BidHub
+                </h1>
+                <p class="text-muted mb-4">
+                  Bid on tech, books, and creative gear from fellow students.
+                  Create listings or place bids using your BidHub credits.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <a href="#featured" class="bh-btn-primary">
+                    Browse auctions
+                  </a>
+                  <a href="./auth/register.html" class="bh-btn-outline">
+                    Register
+                  </a>
+                </div>
+              </div>
+
+              <!-- Right: sample listing card -->
+              <div class="col-lg-5">
+  <article class="bh-card bh-hero-listing-card p-3" id="hero-featured-card">
+    <!-- This content will be replaced by JS -->
+    <div class="bh-hero-image-placeholder mb-3">
+      <span>Image</span>
+    </div>
+    <h2 class="h6 mb-1">Loading featured auction…</h2>
+    <p class="text-muted small mb-3">Please wait a moment.</p>
+    <button class="bh-btn-primary btn-sm" disabled>View listing</button>
+  </article>
+</div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- WHY BIDHUB -->
+        <section class="py-3 py-lg-4">
+          <h2 class="mb-3">Why BidHub?</h2>
+          <div class="row gy-3">
+            <div class="col-md-4">
+              <article class="bh-card bh-why-card p-3 h-100">
+                <div class="bh-icon-circle mb-2">🎓</div>
+                <h3 class="h6 mb-1">Student-only community</h3>
+                <p class="text-muted small mb-0">
+                  Only verified students can join, keeping auctions relevant and
+                  safe.
+                </p>
+              </article>
+            </div>
+            <div class="col-md-4">
+              <article class="bh-card bh-why-card p-3 h-100">
+                <div class="bh-icon-circle mb-2">💳</div>
+                <h3 class="h6 mb-1">Credits, not cash</h3>
+                <p class="text-muted small mb-0">
+                  Bid using credits instead of sharing your card details
+                  everywhere.
+                </p>
+              </article>
+            </div>
+            <div class="col-md-4">
+              <article class="bh-card bh-why-card p-3 h-100">
+                <div class="bh-icon-circle mb-2">⏱️</div>
+                <h3 class="h6 mb-1">List or bid in minutes</h3>
+                <p class="text-muted small mb-0">
+                  A clean interface for creating listings and placing bids
+                  quickly.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- FEATURED AUCTIONS -->
+        <section id="featured" class="pt-2 pb-4 pt-lg-3 pb-lg-4">
+
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center mb-3"
+          >
+            <h2 class="mb-0">Featured auctions</h2>
+            <a href="./auction/auctions.html" class="bh-link-muted">
+              View all auctions →
+            </a>
+          </div>
+
+          <!-- Filled by JS using API -->
+          <div id="featured-auctions-grid" class="row gy-4">
+            <p class="text-muted">Loading featured auctions…</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bh-footer">
+      <div class="container">
+        <div class="row gy-4 pb-3">
+          <!-- Brand -->
+          <div class="col-md-3">
+            <h2 class="h5 mb-2 bh-footer-title">BidHub</h2>
+            <p class="small mb-0 bh-footer-text">
+              A student-focused auction platform for buying and selling with
+              credits.
+            </p>
+          </div>
+
+          <!-- Explore -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Explore</h3>
+            <ul class="list-unstyled small mb-0">
+              <li><a class="bh-footer-link" href="./auction/auctions.html">Auctions</a></li>
+              <li><a class="bh-footer-link" href="./profile/my-listings.html">My listings</a></li>
+              <li><a class="bh-footer-link" href="./profile/my-bids.html">My bids</a></li>
+            </ul>
+          </div>
+
+          <!-- Account -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Account</h3>
+            <ul class="list-unstyled small mb-0">
+              <li><a class="bh-footer-link" href="./auth/login.html">Log in</a></li>
+              <li><a class="bh-footer-link" href="./auth/register.html">Register</a></li>
+            </ul>
+          </div>
+
+          <!-- Help -->
+          <div class="col-md-3">
+            <h3 class="small text-uppercase mb-2 bh-footer-title">Help</h3>
+            <ul class="list-unstyled small mb-0">
+              <li><a class="bh-footer-link" href="#">Support</a></li>
+              <li><a class="bh-footer-link" href="#">Terms</a></li>
+              <li><a class="bh-footer-link" href="#">Privacy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="small mb-0 bh-footer-text">© 2025 BidHub.</p>
+      </div>
+    </footer>
+
+    <!-- JS -->
+    <!-- <script type="module" src="./js/main.js"></script> -->
+    <script type="module" src="./js/auction/landing.js"></script>
+  </body>
+</html>

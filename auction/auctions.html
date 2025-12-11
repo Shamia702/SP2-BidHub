@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BidHub | Auctions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <!-- NAVBAR (logged out, Auctions active) -->
+    <nav class="navbar bh-navbar fixed-top">
+      <div class="container d-flex align-items-center">
+        <!-- Logo -->
+        <a
+          href="../index.html"
+          class="navbar-brand d-flex align-items-center bh-navbar-logo"
+        >
+          <img
+            src="../img/bidhub_logo_transparent.png"
+            alt="BidHub logo"
+            class="bh-logo-img me-2"
+          />
+          <span class="visually-hidden">BidHub</span>
+        </a>
+
+        <!-- Center nav -->
+        <ul class="nav mx-auto gap-3">
+          <li class="nav-item">
+            <a href="../index.html" class="nav-link bh-nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="./auctions.html" class="nav-link bh-nav-link active">
+              Auctions
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right: auth buttons -->
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <a href="../auth/login.html" class="bh-btn-outline">Login</a>
+          <a href="../auth/register.html" class="bh-btn-primary">Register</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="bh-page">
+      <div class="container">
+        <header class="mb-3">
+          <h1 class="mb-1">Auctions</h1>
+          <p class="text-muted mb-0">
+            Browse all active listings. You can view details without an account,
+            but you need to log in to place a bid.
+          </p>
+        </header>
+
+        <!-- Search -->
+       <section class="mb-4">
+  <form id="auctionSearchForm" class="bh-search-form">
+    <!-- Search input -->
+    <div class="bh-search-main">
+      <label class="bh-form-label d-none" for="auctionSearch">
+        Search
+      </label>
+      <input
+        type="search"
+        id="auctionSearch"
+        class="form-control bh-search-input"
+        placeholder="Search auctions by title or description"
+      />
+    </div>
+    <div class="bh-search-actions">
+      <button type="submit" class="bh-btn-primary btn-sm">
+        Search
+      </button>
+      <button
+        type="button"
+        id="clearSearch"
+        class="bh-btn-outline btn-sm"
+      >
+        Clear
+      </button>
+    </div>
+
+    <!-- Sort dropdown -->
+    <div class="bh-search-sort">
+      <label class="bh-form-label d-none" for="sortSelect">
+        Sort by
+      </label>
+      <select
+        id="sortSelect"
+        class="form-select form-select-sm bh-search-select"
+      >
+        <option value="newest">Newest</option>
+        <option value="endingSoon">Ending soon</option>
+        <option value="mostBids">Most bids</option>
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    
+  </form>
+</section>
+        <!-- Results -->
+        <section>
+  <div id="auctions-grid" class="row gy-4">
+    <!-- JS will render skeleton placeholders, then real cards -->
+  </div>
+
+  <!-- Pagination -->
+  <nav id="auctions-pagination" class="bh-pagination mt-3">
+    <!-- JS will inject Previous / Next buttons -->
+  </nav>
+</section>
+
+      </div>
+    </main>
+
+    <!-- JS -->
+    <script type="module" src="../js/main.js"></script>
+    <script type="module" src="../js/auction/auctions.js"></script>
+  </body>
+</html>

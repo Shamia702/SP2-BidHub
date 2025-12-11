@@ -1,0 +1,275 @@
+@use "variables" as v;
+
+/* NAV LINKS (center Home / Auctions) */
+.bh-navbar{
+  background-color: v.$bh-color-surface;
+  height: 70px;
+}
+.bh-nav-link {
+  color: v.$bh-color-text-muted;
+  font-size: 0.95rem;
+
+  &.active {
+    color: v.$bh-color-text-main;
+    font-weight: 500;
+  }
+
+  &:hover {
+    color: v.$bh-color-text-main;
+  }
+}
+.bh-logo-img {
+  height: 48px; // tweak to match your Figma
+}
+
+
+/* HERO */
+
+.bh-hero-section {
+  margin-bottom: 2rem;
+}
+
+.bh-hero-card {
+  border-radius: 1.5rem;
+}
+
+.bh-hero-listing-card {
+  border-radius: 1rem;
+}
+
+// BUTTONS
+.bh-btn-primary {
+  display: inline-block;
+  background-color: v.$bh-color-primary;
+  color: v.$bh-color-surface;
+  text-decoration: none;
+  border-radius: 1.5rem;
+  padding: 0.425rem 1.5rem; // ~10px vertical, more horizontal
+  border: 1px solid v.$bh-color-primary;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken(v.$bh-color-primary, 5%);
+    border-color: darken(v.$bh-color-primary, 5%);
+    color: v.$bh-color-surface;
+    text-decoration: none;
+  }
+}
+
+.bh-btn-outline {
+  display: inline-block;
+  background-color: transparent;
+  color: v.$bh-color-text-main;
+  text-decoration: none;
+  border-radius: 1.5rem;
+  padding: 0.425rem 1.5rem;
+  border: 1px solid v.$bh-color-border;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background-color: v.$bh-color-page-bg;
+    text-decoration: none;
+  }
+}
+
+/* small versions, e.g. View listing */
+.bh-btn-primary.btn-sm,
+.bh-btn-outline.btn-sm {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+
+/* grey image placeholder in hero */
+.bh-hero-image-placeholder {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: v.$bh-color-text-muted;
+  font-size: 0.9rem;
+}
+
+/* Why BidHub icon circle */
+.bh-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$bh-radius-pill;
+  background-color: v.$bh-color-page-bg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Listing image placeholders / real images */
+.bh-listing-thumb {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 160px;
+}
+
+.bh-listing-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: v.$bh-radius-card;
+}
+
+/* Footer styles (4-column footer) */
+.bh-footer {
+  background-color: #0f172a;
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.bh-footer-title {
+  color: #ffffff;
+}
+
+.bh-footer-text {
+  color: #9ca3af;
+}
+
+.bh-footer-link {
+  color: #e5e7eb;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Muted inline link used for "View all auctions →" */
+.bh-link-muted {
+  font-size: 0.9rem;
+  color: v.$bh-color-primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+// SEARCH & FILTER BAR ON AUCTIONS PAGE
+.bh-search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem; // vertical, horizontal gap
+  align-items: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.bh-search-main {
+  flex: 1 1 230px;
+  min-width: 220px;
+}
+
+.bh-search-sort {
+  flex: 0 0 180px;
+}
+
+.bh-search-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Slightly softer look for search + select */
+.bh-search-input,
+.bh-search-select {
+  border-radius: 999px;
+  border-color: v.$bh-color-border;
+  background-color: v.$bh-color-surface;
+  font-size: 0.9rem;
+  padding-left: 0.9rem;
+  padding-right: 0.9rem;
+}
+
+.bh-search-input:focus,
+.bh-search-select:focus {
+  border-color: v.$bh-color-primary;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+// Tag pill under title
+.bh-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  background-color: v.$bh-color-page-bg;
+  font-size: 0.75rem;
+}
+
+// Single listing images
+.bh-listing-main-img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: v.$bh-radius-card;
+}
+
+.bh-listing-thumb-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: v.$bh-radius-card;
+}
+
+// Bid summary card right side
+.bh-bid-summary-card {
+  font-size: 0.9rem;
+}
+
+// Orange time chip
+.bh-time-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.9rem;
+  border-radius: 999px;
+  background-color: #fee2c5;
+  color: #9a3412;
+  font-size: 0.8rem;
+}
+
+// Blue info alert box
+.bh-bid-alert {
+  border-radius: 0.75rem;
+  border-left: 4px solid #2563eb;
+  background-color: #e0edff;
+  padding: 0.75rem;
+}
+
+// Bid history rows
+.bh-bid-history-item {
+  background-color: v.$bh-color-surface;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid v.$bh-color-border;
+}
+
+/* Skeletons for single listing (we used these in JS) */
+.bh-listing-skeleton {
+  animation: bh-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.bh-skeleton-hero-img {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 260px;
+}
+
+.bh-skeleton-thumb-sm {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  width: 70px;
+  height: 70px;
+}

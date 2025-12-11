@@ -1,0 +1,19 @@
+{
+  "name": "sp2-bidhub",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "sass sass/main.scss css/styles.css --watch --load-path=node_modules",
+  "build": "sass sass/main.scss css/styles.css --style=compressed --load-path=node_modules"
+},
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "sass": "^1.95.1"
+  }
+}

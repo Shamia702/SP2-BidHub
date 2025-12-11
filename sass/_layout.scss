@@ -1,0 +1,18 @@
+@use "variables" as v;
+
+body {
+  background-color: v.$bh-color-page-bg;
+  color: v.$bh-color-text-main;
+  font-family: v.$bh-font-sans;
+}
+
+.bh-page {
+  padding-top: 100px;         
+  padding-bottom: 80px;
+}
+
+.bh-card {
+  background-color: v.$bh-color-surface;
+  border-radius: v.$bh-radius-card;
+  border: 1px solid v.$bh-color-border;
+}

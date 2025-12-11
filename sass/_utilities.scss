@@ -1,0 +1,98 @@
+@use "variables" as v;
+
+.bh-skeleton-card {
+  animation: bh-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.bh-skeleton-thumb {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 160px;
+}
+
+.bh-skeleton-line {
+  background-color: v.$bh-color-border;
+  border-radius: 999px;
+  height: 10px;
+}
+
+.bh-skeleton-line-lg {
+  width: 80%;
+}
+
+.bh-skeleton-line-sm {
+  width: 50%;
+}
+
+@keyframes bh-skeleton-pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+// Single listing images
+.bh-listing-main-img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: v.$bh-radius-card;
+}
+
+.bh-listing-thumb-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: v.$bh-radius-card;
+}
+
+/* Skeletons for single listing */
+.bh-listing-skeleton {
+  animation: bh-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.bh-skeleton-hero-img {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 260px;
+}
+
+.bh-skeleton-thumb-sm {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  width: 70px;
+  height: 70px;
+}
+
+/* You already have these for cards; if not, include: */
+.bh-skeleton-line {
+  background-color: v.$bh-color-border;
+  border-radius: 999px;
+  height: 10px;
+}
+
+.bh-skeleton-line-lg {
+  width: 80%;
+}
+
+.bh-skeleton-line-sm {
+  width: 50%;
+}
+
+@keyframes bh-skeleton-pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
