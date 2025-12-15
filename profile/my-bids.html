@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BidHub | My bids</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta
+      name="description"
+      content="See all the auctions you have bid on in BidHub."
+    />
+    <meta name="author" content="Your Name" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+
+    <main class="bh-page">
+      <div class="container">
+        <!-- Page heading -->
+        <header class="mb-3">
+          <h1 class="mb-1">My bids</h1>
+          <p class="text-muted mb-0 small">
+            An overview of the auctions you’ve placed bids on.
+          </p>
+        </header>
+
+        <!-- Alert -->
+        <div id="myBidsAlert" class="alert d-none" role="alert"></div>
+
+        <!-- Bids list -->
+        <section id="my-bids-section">
+          <article class="bh-card p-3 p-lg-4" id="my-bids-card">
+            <div id="my-bids-content">
+              <!-- JS: skeleton then list -->
+              <div class="bh-listing-skeleton">
+                <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
+                <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
+                <div class="bh-skeleton-line bh-skeleton-line-sm mb-1"></div>
+                <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer id="site-footer" class="bh-footer"></footer>
+
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/profile/my-bids.js"></script>
+  </body>
+</html>

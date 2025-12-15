@@ -1,81 +1,54 @@
 // js/auction/listing.js
-import { getListingById } from "../api/listings.js";
-import {
-  getHighestBidAmount,
-  formatEndsAt,
-  formatTimeRemaining,
-} from "../utils/format.js";
+import { AUCTION_URL, API_KEY } from "../api/config.js";
+import { getUser, getToken } from "../utils/storage.js";
+import { formatTimeRemaining } from "../utils/format.js";
 
-function getListingIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id");
+const params = new URLSearchParams(window.location.search);
+const listingId = params.get("id");
+
+if (!listingId) {
+  console.error("No listing ID in URL");
 }
 
-// Skeleton while loading
-function renderSkeleton() {
-  const header = document.querySelector("#listing-header");
-  const root = document.querySelector("#single-listing-root");
-  if (!header || !root) return;
-
-  header.innerHTML = `
-    <h1 class="h4 mb-2">Loading listing…</h1>
-    <p class="text-muted small mb-0">
-      Please wait while we fetch this auction.
-    </p>
-  `;
-
-  root.innerHTML = `
-    <article class="bh-card p-3 p-lg-4 bh-listing-skeleton">
-      <div class="row gy-4">
-        <div class="col-lg-7">
-          <div class="bh-skeleton-hero-img mb-3"></div>
-          <div class="d-flex gap-2">
-            <div class="bh-skeleton-thumb-sm"></div>
-            <div class="bh-skeleton-thumb-sm"></div>
-            <div class="bh-skeleton-thumb-sm"></div>
-          </div>
-          <div class="mt-4">
-            <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
-            <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
-          </div>
-        </div>
-        <div class="col-lg-5">
-          <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
-          <div class="bh-skeleton-line bh-skeleton-line-sm mb-2"></div>
-          <div class="bh-skeleton-line bh-skeleton-line-sm mb-2"></div>
-          <div class="bh-skeleton-line bh-skeleton-line-lg mb-3"></div>
-          <div class="bh-skeleton-line bh-skeleton-line-sm mb-2"></div>
-          <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
-        </div>
-      </div>
-    </article>
-  `;
+function formatBidDate(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
-function renderHeader(listing) {
-  const header = document.querySelector("#listing-header");
-  if (!header) return;
+// Fetch listing with seller + bids
+async function fetchListing() {
+  const url = `${AUCTION_URL}/listings/${listingId}?_seller=true&_bids=true`;
 
-  const { title, tags = [], seller, endsAt, _count, bids = [] } = listing;
-  const tagLabel = tags[0] || "Listing";
-  const sellerName = seller?.name || "Unknown seller";
-  const timeRemaining = formatTimeRemaining(endsAt);
-  const bidsCount = _count?.bids ?? bids.length;
+  const res = await fetch(url, {
+    headers: {
+      "X-Noroff-API-Key": API_KEY,
+    },
+  });
 
-  header.innerHTML = `
-    <h1 class="h4 mb-2">${title}</h1>
-    <div class="d-flex flex-wrap align-items-center gap-2 small text-muted">
-      <span class="bh-tag-pill">${tagLabel}</span>
-      <span>Listing by <strong>@${sellerName}</strong></span>
-      <span>• ${timeRemaining}</span>
-      <span>• ${bidsCount} bid${bidsCount === 1 ? "" : "s"}</span>
-    </div>
-  `;
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      json?.errors?.[0]?.message || "Could not load listing details."
+    );
+  }
+
+  return json.data;
 }
 
 function renderListing(listing) {
-  const root = document.querySelector("#single-listing-root");
-  if (!root) return;
+  const container = document.querySelector("#single-listing");
+  if (!container) return;
+
+  const user = getUser();
 
   const {
     title,
@@ -87,46 +60,51 @@ function renderListing(listing) {
     bids = [],
   } = listing;
 
-  const highestBid = getHighestBidAmount(listing);
-  const bidsCount = _count?.bids ?? bids.length;
-  const minNextBid = highestBid + 1; // simple rule for display
+  const images = Array.isArray(media) && media.length > 0 ? media : [];
+  const mainImage = images[0] || null;
+  const timeText = formatTimeRemaining(endsAt);
+  const bidsCount = _count?.bids ?? bids.length ?? 0;
 
-  const mainImage = media?.[0];
-  const otherImages = (media || []).slice(1);
-  const sellerName = seller?.name || "Unknown seller";
+  // Get highest bid
+  const highestBid = bids.length
+    ? bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0)
+    : 0;
 
-  const endsAtText = formatEndsAt(endsAt);
-  const timeRemaining = formatTimeRemaining(endsAt);
+  const sellerName =
+    seller?.name || seller?.username || seller?.email || "Unknown seller";
 
-  const sortedBids = [...bids].sort(
-    (a, b) => new Date(b.created) - new Date(a.created)
-  );
-
-  root.innerHTML = `
+  // MAIN LAYOUT: gallery + details + bid section placeholder
+  container.innerHTML = `
     <div class="row gy-4">
-      <!-- LEFT: images + description -->
-      <div class="col-lg-8">
-        <article class="bh-card p-3 p-lg-4 mb-3">
-          <figure class="mb-3">
-            ${
-              mainImage?.url
-                ? `<img src="${mainImage.url}" alt="${
-                    mainImage.alt || title
-                  }" class="bh-listing-main-img" />`
-                : `<div class="bh-skeleton-hero-img"></div>`
-            }
-          </figure>
+      <!-- Left: gallery -->
+      <div class="col-lg-7">
+        <article>
+          ${
+            mainImage
+              ? `<img src="${mainImage.url}" alt="${
+                  mainImage.alt || title || "Listing image"
+                }" class="bh-listing-main-img mb-3" />`
+              : `<div class="bh-skeleton-hero-img mb-3"></div>`
+          }
 
           ${
-            otherImages.length
+            images.length > 1
               ? `
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              ${otherImages
+            <div class="d-flex flex-wrap gap-2">
+              ${images
                 .map(
-                  (img) => `
-                <img src="${img.url}" alt="${
-                    img.alt || title
-                  }" class="bh-listing-thumb-img" />
+                  (img, index) => `
+                <button
+                  type="button"
+                  class="btn p-0 border-0 bg-transparent bh-listing-thumb-btn"
+                  data-index="${index}"
+                >
+                  <img
+                    src="${img.url}"
+                    alt="${img.alt || title || "Listing image"}"
+                    class="bh-listing-thumb-img"
+                  />
+                </button>
               `
                 )
                 .join("")}
@@ -134,125 +112,314 @@ function renderListing(listing) {
           `
               : ""
           }
-
-          <section class="mt-3">
-            <h2 class="h6 mb-2">Description:</h2>
-            <p class="text-muted small mb-0">
-              ${description || "No description provided for this listing."}
-            </p>
-          </section>
         </article>
-
-        <section class="mt-3">
-          <h2 class="h6 mb-1">
-            Bid history (${bidsCount} bid${bidsCount === 1 ? "" : "s"})
-          </h2>
-          <p class="text-muted small mb-2">
-            Most recent bids at the top. All times shown in local time.
-          </p>
-          ${
-            sortedBids.length
-              ? `
-            <div class="vstack gap-2">
-              ${sortedBids
-                .slice(0, 5)
-                .map(
-                  (bid) => `
-                <div class="bh-bid-history-item d-flex justify-content-between align-items-center">
-                  <span><strong>${bid.amount} credits</strong></span>
-                  <span class="text-muted small">
-                    @${bid.bidderName || "anonymous"} • ${new Date(
-                    bid.created
-                  ).toLocaleTimeString("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                  </span>
-                </div>
-              `
-                )
-                .join("")}
-            </div>
-          `
-              : `<p class="text-muted small mb-0">
-                No bids yet. Log in to be the first to bid.
-              </p>`
-          }
-        </section>
       </div>
 
-      <!-- RIGHT: bid summary card -->
-      <div class="col-lg-4">
-        <aside class="bh-card p-3 p-lg-4 bh-bid-summary-card">
-          <p class="text-muted small mb-1">Current highest bid</p>
-          <p class="h5 mb-1">${highestBid} credits</p>
-          <p class="text-muted small mb-3">
-            ${bidsCount} bid${bidsCount === 1 ? "" : "s"} so far •
-            Min next bid: ${minNextBid} credits
-          </p>
-
-          <div class="mb-3">
-            <span class="bh-time-chip">
-              ${timeRemaining} (${endsAtText})
-            </span>
-          </div>
-
-          <div class="bh-bid-alert mb-3">
-            <p class="small mb-2">
-              You need an account to place a bid on this listing.
+      <!-- Right: info + bid box -->
+      <div class="col-lg-5">
+        <article class="bh-card p-3 p-lg-4 h-100 d-flex flex-column">
+          <header class="mb-3">
+            <h1 class="h4 mb-2">${title}</h1>
+            <p class="text-muted small mb-1">
+              Sold by <strong>@${sellerName}</strong>
             </p>
-            <div class="d-flex gap-2">
-              <a href="../auth/login.html" class="bh-btn-outline btn-sm">
-                Login
-              </a>
-              <a href="../auth/register.html" class="bh-btn-primary btn-sm">
-                Register
-              </a>
-            </div>
-          </div>
+            <p class="text-muted small mb-0">
+              <span class="badge bg-light text-muted">
+                <span class="bh-countdown" data-ends-at="${endsAt || ""}">
+                  ${timeText}
+                </span>
+              </span>
+              <span class="ms-2">
+                ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
+              </span>
+            </p>
+          </header>
 
-          <p class="text-muted small mb-0">
-            Seller: <strong>@${sellerName}</strong>
-          </p>
-        </aside>
+          <section class="mb-3">
+            <h2 class="h6 mb-1">Description</h2>
+            <p class="text-muted small mb-0">
+              ${description || "No description provided."}
+            </p>
+          </section>
+
+          <section class="mb-3">
+            <h2 class="h6 mb-1">Current highest bid</h2>
+            <p class="mb-0">
+              <strong>${highestBid} credits</strong>
+            </p>
+          </section>
+
+          <!-- Bid section goes here -->
+          <section id="listing-bid-section" class="mt-auto"></section>
+        </article>
       </div>
     </div>
   `;
+
+  // hook up thumbnail clicks to swap main image
+  const thumbButtons = container.querySelectorAll(".bh-listing-thumb-btn");
+  if (thumbButtons && mainImage) {
+    const mainImgEl = container.querySelector(".bh-listing-main-img");
+    thumbButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.index);
+        const img = images[index];
+        if (!img || !mainImgEl) return;
+        mainImgEl.src = img.url;
+        mainImgEl.alt = img.alt || title || "Listing image";
+      });
+    });
+  }
+
+  renderBidSection(listing, user, highestBid);
+  renderBidsList(listing);
 }
 
-async function initSingleListingPage() {
-  const id = getListingIdFromUrl();
-  const root = document.querySelector("#single-listing-root");
+function renderBidSection(listing, user, highestBid) {
+  const bidSection = document.querySelector("#listing-bid-section");
+  if (!bidSection) return;
 
-  if (!root) return;
+  const isLoggedIn = !!user;
+  const isSeller = isLoggedIn && listing.seller?.name === user.name;
 
-  if (!id) {
-    root.innerHTML = `
-      <p class="text-danger">
-        No listing ID provided. Please go back to the auctions page and select a listing.
+  // Logged out → show "Login to bid"
+  if (!isLoggedIn) {
+    bidSection.innerHTML = `
+      <div class="alert alert-info small mb-0" role="alert">
+        <strong>Want to bid?</strong>
+        <a href="/auth/login.html" class="alert-link">Log in</a>
+        or
+        <a href="/auth/register.html" class="alert-link">create an account</a>
+        to place a bid on this listing.
+      </div>
+    `;
+    return;
+  }
+
+  // Seller → cannot bid on own listing
+  if (isSeller) {
+    bidSection.innerHTML = `
+      <div class="alert alert-warning small mb-2" role="alert">
+        You are the seller of this listing and cannot place bids on it.
+      </div>
+      <p class="small text-muted mb-0">
+        Manage this listing from your <a href="/profile/my-listings.html" class="bh-link-muted">My listings</a> page.
       </p>
     `;
     return;
   }
 
-  renderSkeleton();
+  // Logged in + not seller → show bid form
+  bidSection.innerHTML = `
+    <div
+      id="bidAlert"
+      class="alert d-none small mb-2"
+      role="alert"
+    ></div>
+
+    <form id="bidForm">
+      <div class="mb-2">
+        <label for="bidAmount" class="form-label bh-form-label small">
+          Your bid (credits)
+        </label>
+        <input
+          type="number"
+          min="${highestBid + 1}"
+          step="1"
+          class="form-control form-control-sm"
+          id="bidAmount"
+          name="amount"
+          placeholder="Enter at least ${highestBid + 1}"
+          required
+        />
+        <div class="form-text small">
+          Your bid must be higher than the current highest bid.
+        </div>
+      </div>
+      <button type="submit" class="bh-btn-primary btn-sm w-100">
+        Place bid
+      </button>
+    </form>
+  `;
+
+  const form = bidSection.querySelector("#bidForm");
+  if (form) {
+    form.addEventListener("submit", (event) =>
+      handleBidSubmit(event, listing, highestBid)
+    );
+  }
+}
+function getBidderName(bid) {
+  // If API already gives a direct string
+  if (bid.bidderName && typeof bid.bidderName === "string") {
+    return bid.bidderName;
+  }
+
+  // If API sends bidder as a string
+  if (typeof bid.bidder === "string") {
+    return bid.bidder;
+  }
+
+  // If API sends bidder as an object { name: "..." }
+  if (bid.bidder && typeof bid.bidder === "object" && bid.bidder.name) {
+    return bid.bidder.name;
+  }
+
+  return "unknown";
+}
+
+
+function renderBidsList(listing) {
+  const container = document.querySelector("#listing-bids");
+  if (!container) return;
+
+  const bids = listing.bids ?? [];
+
+  if (!bids.length) {
+    container.innerHTML = `
+      <section class="mt-4">
+        <h2 class="h6 mb-2">Bid history</h2>
+        <p class="text-muted small mb-0">
+          No bids yet. Be the first to place a bid on this listing.
+        </p>
+      </section>
+    `;
+    return;
+  }
+
+  const sorted = [...bids].sort(
+    (a, b) => new Date(b.created) - new Date(a.created)
+  );
+
+  container.innerHTML = `
+    <section class="mt-4">
+      <h2 class="h6 mb-2">Bid history</h2>
+      <ul class="list-group list-group-flush bh-bids-list">
+        ${sorted
+          .map(
+            (bid) => `
+          <li class="list-group-item d-flex justify-content-between align-items-center small">
+            <div>
+              <strong>${bid.amount} credits</strong>
+              <span class="text-muted">
+  by @${getBidderName(bid)}
+</span>
+
+            </div>
+            <span class="text-muted">${formatBidDate(bid.created)}</span>
+          </li>
+        `
+          )
+          .join("")}
+      </ul>
+    </section>
+  `;
+}
+
+function showBidAlert(type, message) {
+  const alert = document.querySelector("#bidAlert");
+  if (!alert) return;
+
+  alert.className = `alert alert-${type} small mb-2`; // reset + set Bootstrap classes
+  alert.textContent = message;
+}
+
+async function handleBidSubmit(event, listing, highestBid) {
+  event.preventDefault();
+  const form = event.target;
+  const amountInput = form.bidAmount;
+  if (!amountInput) return;
+
+  const raw = amountInput.value.trim();
+  const amount = Number(raw);
+
+  if (!raw || Number.isNaN(amount) || amount <= highestBid) {
+    showBidAlert(
+      "warning",
+      `Your bid must be higher than the current highest bid (${highestBid} credits).`
+    );
+    return;
+  }
+
+  const token = getToken();
+  if (!token) {
+    showBidAlert("warning", "You must be logged in to place a bid.");
+    return;
+  }
 
   try {
-    const listing = await getListingById(id);
-    renderHeader(listing);
-    renderListing(listing);
+    const res = await fetch(
+      `${AUCTION_URL}/listings/${listingId}/bids`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-Noroff-API-Key": API_KEY,
+        },
+        body: JSON.stringify({ amount }),
+      }
+    );
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      const message =
+        json?.errors?.[0]?.message || "Could not place bid. Please try again.";
+      showBidAlert("danger", message);
+      return;
+    }
+
+    showBidAlert("success", "Bid placed successfully!");
+    amountInput.value = "";
+
+    // Reload listing to update current highest bid + history
+    await loadListing();
   } catch (error) {
     console.error(error);
-    const header = document.querySelector("#listing-header");
-    if (header) {
-      header.innerHTML = `<h1 class="h4 mb-2">Listing not available</h1>`;
-    }
-    root.innerHTML = `
-      <p class="text-danger">
-        Could not load this listing. It may have been removed or an error occurred.
-      </p>
-    `;
+    showBidAlert(
+      "danger",
+      "Something went wrong while placing your bid. Please try again."
+    );
   }
 }
 
-document.addEventListener("DOMContentLoaded", initSingleListingPage);
+async function loadListing() {
+  const listingSection = document.querySelector("#single-listing");
+  const bidsSection = document.querySelector("#listing-bids");
+
+  if (!listingSection || !bidsSection) return;
+
+  // Optional: show skeleton again on reload
+  listingSection.classList.add("bh-listing-skeleton");
+
+  try {
+    const listing = await fetchListing();
+    listingSection.classList.remove("bh-listing-skeleton");
+    renderListing(listing);
+  } catch (error) {
+    console.error(error);
+    listingSection.innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        ${error.message}
+      </div>
+    `;
+    bidsSection.innerHTML = "";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (!listingId) {
+    const section = document.querySelector("#single-listing");
+    if (section) {
+      section.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          No listing specified. Please go back to the auctions page and select a listing.
+        </div>
+      `;
+    }
+    return;
+  }
+
+  loadListing();
+});

@@ -4,60 +4,52 @@
     <meta charset="UTF-8" />
     <title>BidHub | Auctions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../css/styles.css" />
+
+    <meta
+      name="description"
+      content="Browse all active auctions on BidHub. Search, sort and view student listings, and log in to place bids."
+    />
+    <meta name="author" content="Your Name" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
   </head>
   <body>
-    <!-- NAVBAR (logged out, Auctions active) -->
-    <nav class="navbar bh-navbar fixed-top">
-      <div class="container d-flex align-items-center">
-        <!-- Logo -->
-        <a
-          href="../index.html"
-          class="navbar-brand d-flex align-items-center bh-navbar-logo"
-        >
-          <img
-            src="../img/bidhub_logo_transparent.png"
-            alt="BidHub logo"
-            class="bh-logo-img me-2"
-          />
-          <span class="visually-hidden">BidHub</span>
-        </a>
-
-        <!-- Center nav -->
-        <ul class="nav mx-auto gap-3">
-          <li class="nav-item">
-            <a href="../index.html" class="nav-link bh-nav-link">Home</a>
-          </li>
-          <li class="nav-item">
-            <a href="./auctions.html" class="nav-link bh-nav-link active">
-              Auctions
-            </a>
-          </li>
-        </ul>
-
-        <!-- Right: auth buttons -->
-        <div class="ms-auto d-flex align-items-center gap-2">
-          <a href="../auth/login.html" class="bh-btn-outline">Login</a>
-          <a href="../auth/register.html" class="bh-btn-primary">Register</a>
-        </div>
-      </div>
-    </nav>
+    <!-- Header injected by JS -->
+    <header id="site-header"></header>
 
     <!-- MAIN -->
     <main class="bh-page">
       <div class="container">
-        <header class="mb-3">
-          <h1 class="mb-1">Auctions</h1>
-          <p class="text-muted mb-0">
-            Browse all active listings. You can view details without an account,
-            but you need to log in to place a bid.
-          </p>
+        <!-- Page heading + Create listing button (only when logged in) -->
+        <header
+          class="mb-3 d-flex flex-wrap justify-content-between align-items-center gap-2"
+        >
+          <div>
+            <h1 class="mb-1">Auctions</h1>
+            <p class="text-muted mb-0 small">
+              Browse all active listings. You can view details without an
+              account, but you need to log in to place a bid.
+            </p>
+          </div>
+
+          <!-- JS will remove d-none when user is logged in -->
+          <a
+            href="/auction/create-listing.html"
+            class="bh-btn-primary d-none"
+            id="createListingBtn"
+          >
+            Create listing
+          </a>
         </header>
 
-        <!-- Search -->
+        <!-- Search + Sort -->
        <section class="mb-4">
   <form id="auctionSearchForm" class="bh-search-form">
-    <!-- Search input -->
+    <!-- main search input + suggestions -->
     <div class="bh-search-main">
       <label class="bh-form-label d-none" for="auctionSearch">
         Search
@@ -67,8 +59,13 @@
         id="auctionSearch"
         class="form-control bh-search-input"
         placeholder="Search auctions by title or description"
+        autocomplete="off"
       />
+      <!-- suggestions will be filled by JS -->
+      <div id="auctionSearchSuggestions" class="bh-search-suggestions"></div>
     </div>
+
+    <!-- actions -->
     <div class="bh-search-actions">
       <button type="submit" class="bh-btn-primary btn-sm">
         Search
@@ -82,7 +79,7 @@
       </button>
     </div>
 
-    <!-- Sort dropdown -->
+    <!-- sort dropdown -->
     <div class="bh-search-sort">
       <label class="bh-form-label d-none" for="sortSelect">
         Sort by
@@ -96,28 +93,28 @@
         <option value="mostBids">Most bids</option>
       </select>
     </div>
-
-    <!-- Buttons -->
-    
   </form>
 </section>
-        <!-- Results -->
+
+        <!-- RESULTS GRID -->
         <section>
-  <div id="auctions-grid" class="row gy-4">
-    <!-- JS will render skeleton placeholders, then real cards -->
-  </div>
+          <div id="auctions-grid" class="row gy-4">
+            <!-- JS: skeletons first, then real cards -->
+          </div>
 
-  <!-- Pagination -->
-  <nav id="auctions-pagination" class="bh-pagination mt-3">
-    <!-- JS will inject Previous / Next buttons -->
-  </nav>
-</section>
-
+          <!-- PAGINATION -->
+          <nav id="auctions-pagination" class="bh-pagination mt-3">
+            <!-- JS injects Previous / Next buttons -->
+          </nav>
+        </section>
       </div>
     </main>
 
+    <!-- Footer injected by JS -->
+    <footer id="site-footer" class="bh-footer"></footer>
+
     <!-- JS -->
-    <script type="module" src="../js/main.js"></script>
-    <script type="module" src="../js/auction/auctions.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/auction/auctions.js"></script>
   </body>
 </html>

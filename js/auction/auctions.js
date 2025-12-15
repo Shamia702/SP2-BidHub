@@ -1,251 +1,402 @@
 // js/auction/auctions.js
-import { getActiveListings } from "../api/listings.js";
-import { getHighestBidAmount } from "../utils/format.js";
+
+import { AUCTION_URL, API_KEY } from "../api/config.js";
+import { getUser } from "../utils/storage.js";
+import { formatTimeRemaining } from "../utils/format.js";
+
+const PAGE_SIZE = 9;
 
 let allListings = [];
+let filteredListings = [];
 let currentPage = 1;
-let totalPages = 1;
+let currentSearch = "";
+let currentSort = "newest";
 
-// ---------- skeleton (loading placeholders) ----------
+const gridEl = document.querySelector("#auctions-grid");
+const paginationEl = document.querySelector("#auctions-pagination");
+const searchForm = document.querySelector("#auctionSearchForm");
+const searchInput = document.querySelector("#auctionSearch");
+const clearBtn = document.querySelector("#clearSearch");
+const sortSelect = document.querySelector("#sortSelect");
+const createListingBtn = document.querySelector("#createListingBtn");
+const suggestionsEl = document.querySelector("#auctionSearchSuggestions");
 
-function renderSkeletons(count = 6) {
-  const grid = document.querySelector("#auctions-grid");
-  if (!grid) return;
+/* ---------------------- helpers ---------------------- */
 
-  let html = "";
-  for (let i = 0; i < count; i++) {
-    html += `
-      <div class="col-md-4">
-        <article class="bh-card p-3 h-100 bh-skeleton-card">
-          <div class="bh-skeleton-thumb mb-2"></div>
+function showSkeletons(count = PAGE_SIZE) {
+  if (!gridEl) return;
+
+  const skeletons = Array.from({ length: count })
+    .map(
+      () => `
+      <div class="col-md-6 col-lg-4">
+        <article class="bh-card p-3 bh-skeleton-card">
+          <div class="bh-skeleton-thumb mb-3"></div>
           <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
           <div class="bh-skeleton-line bh-skeleton-line-sm mb-1"></div>
           <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
         </article>
       </div>
-    `;
-  }
-  grid.innerHTML = html;
+    `
+    )
+    .join("");
+
+  gridEl.innerHTML = skeletons;
+  if (paginationEl) paginationEl.innerHTML = "";
 }
 
-// ---------- render cards ----------
+function getHighestBid(listing) {
+  const bids = Array.isArray(listing.bids) ? listing.bids : [];
+  if (!bids.length) return 0;
+  return bids.reduce(
+    (max, bid) => (bid.amount > max ? bid.amount : max),
+    0
+  );
+}
 
-function createListingCard(listing) {
-  const { id, title, media, _count } = listing;
-  const imageUrl = media?.[0]?.url;
-  const imageAlt = media?.[0]?.alt || title || "Listing image";
+function buildCard(listing) {
+  const images = Array.isArray(listing.media) ? listing.media : [];
+  const mainImage = images[0] || null;
+  const highestBid = getHighestBid(listing);
 
-  const highestBid = getHighestBidAmount(listing);
-  const bidsCount = _count?.bids ?? 0;
+  const timeText = listing.endsAt
+    ? formatTimeRemaining(listing.endsAt)
+    : "No end time";
 
   return `
-    <div class="col-md-4">
-      <article class="bh-card p-3 h-100">
-        <figure class="mb-2">
+    <div class="col-md-6 col-lg-4">
+      <article class="bh-card h-100 d-flex flex-column p-3">
+        <div class="mb-3">
           ${
-            imageUrl
-              ? `<img src="${imageUrl}" alt="${imageAlt}" class="bh-listing-img" />`
-              : `<div class="bh-listing-thumb"></div>`
+            mainImage && mainImage.url
+              ? `<img src="${mainImage.url}" alt="${mainImage.alt || listing.title || "Listing image"}" class="img-fluid rounded-3 w-100" style="max-height: 180px; object-fit: cover;" />`
+              : `<div class="bh-skeleton-thumb mb-0"></div>`
           }
-        </figure>
-        <h2 class="h6 mb-1">${title}</h2>
-        <p class="mb-1 small">
-          <strong>Current bid:</strong> ${highestBid} credits
+        </div>
+        <h2 class="h6 mb-1">${listing.title}</h2>
+        <p class="text-muted small mb-2">
+          Current bid: <strong>${highestBid} credits</strong>
         </p>
-        <p class="text-muted small mb-3">${bidsCount} bids</p>
-        <a href="./single-listing-page.html?id=${encodeURIComponent(
-          id
-        )}" class="bh-btn-primary btn-sm">
-          View listing
-        </a>
+        <p class="text-muted small mb-3">
+          <span class="bh-countdown" data-ends-at="${listing.endsAt || ""}">
+            ${timeText}
+          </span>
+        </p>
+        <div class="mt-auto">
+          <a
+            href="/auction/single-listing-page.html?id=${listing.id}"
+            class="bh-btn-primary btn-sm w-100 text-center"
+          >
+            View listing
+          </a>
+        </div>
       </article>
     </div>
   `;
 }
 
-function renderListings(listings) {
-  const grid = document.querySelector("#auctions-grid");
-  if (!grid) return;
+function renderListingsPage(page = 1) {
+  if (!gridEl) return;
 
-  if (!listings.length) {
-    grid.innerHTML = `<p class="text-muted">No auctions match your search.</p>`;
+  if (!filteredListings.length) {
+    gridEl.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-light text-center mb-0" role="alert">
+          No auctions found. Try a different search or clear your filters.
+        </div>
+      </div>
+    `;
+    if (paginationEl) paginationEl.innerHTML = "";
     return;
   }
 
-  grid.innerHTML = listings.map(createListingCard).join("");
+  const total = filteredListings.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (page > totalPages) page = totalPages || 1;
+  currentPage = page;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const pageListings = filteredListings.slice(start, end);
+
+  gridEl.innerHTML = pageListings.map(buildCard).join("");
+
+  renderPagination(totalPages);
 }
 
-// ---------- pagination UI ----------
-
-function renderPagination() {
-  const container = document.querySelector("#auctions-pagination");
-  if (!container) return;
-
+function renderPagination(totalPages) {
+  if (!paginationEl) return;
   if (totalPages <= 1) {
-    container.innerHTML = "";
+    paginationEl.innerHTML = "";
     return;
   }
 
-  const isFirst = currentPage === 1;
-  const isLast = currentPage === totalPages;
+  const prevDisabled = currentPage === 1 ? "disabled" : "";
+  const nextDisabled = currentPage === totalPages ? "disabled" : "";
 
-  container.innerHTML = `
-    <div class="d-flex justify-content-between align-items-center">
-      <button
-        class="bh-btn-outline btn-sm"
-        data-page-action="prev"
-        ${isFirst ? "disabled" : ""}
-      >
-        Previous
-      </button>
-      <span class="small text-muted">
-        Page ${currentPage} of ${totalPages}
-      </span>
-      <button
-        class="bh-btn-outline btn-sm"
-        data-page-action="next"
-        ${isLast ? "disabled" : ""}
-      >
-        Next
-      </button>
-    </div>
+  paginationEl.innerHTML = `
+    <ul class="pagination justify-content-center mb-0">
+      <li class="page-item ${prevDisabled}">
+        <button class="page-link" type="button" data-page="${
+          currentPage - 1
+        }">Previous</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">
+          Page ${currentPage} of ${totalPages}
+        </span>
+      </li>
+      <li class="page-item ${nextDisabled}">
+        <button class="page-link" type="button" data-page="${
+          currentPage + 1
+        }">Next</button>
+      </li>
+    </ul>
   `;
+
+  paginationEl
+    .querySelectorAll("button[data-page]")
+    .forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const page = Number(btn.dataset.page);
+        if (!Number.isNaN(page)) {
+          renderListingsPage(page);
+        }
+      });
+    });
 }
 
-function setupPaginationEvents() {
-  const container = document.querySelector("#auctions-pagination");
-  if (!container) return;
+/* ---------------------- filtering & sorting ---------------------- */
 
-  container.addEventListener("click", (event) => {
-    const action = event.target.getAttribute("data-page-action");
-    if (!action) return;
+function applyFilters() {
+  let list = [...allListings];
 
-    if (action === "prev" && currentPage > 1) {
-      loadPage(currentPage - 1);
-    } else if (action === "next" && currentPage < totalPages) {
-      loadPage(currentPage + 1);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    list = list.filter((item) => {
+      const title = item.title?.toLowerCase() || "";
+      const desc = item.description?.toLowerCase() || "";
+      return title.includes(q) || desc.includes(q);
+    });
+  }
+
+  list.sort((a, b) => {
+    if (currentSort === "endingSoon") {
+      const aTime = a.endsAt ? new Date(a.endsAt) : new Date(8640000000000000);
+      const bTime = b.endsAt ? new Date(b.endsAt) : new Date(8640000000000000);
+      return aTime - bTime;
     }
+
+    if (currentSort === "mostBids") {
+      const aBids = Array.isArray(a.bids) ? a.bids.length : 0;
+      const bBids = Array.isArray(b.bids) ? b.bids.length : 0;
+      return bBids - aBids;
+    }
+
+    const aCreated = a.created ? new Date(a.created) : 0;
+    const bCreated = b.created ? new Date(b.created) : 0;
+    return bCreated - aCreated;
   });
+
+  filteredListings = list;
 }
 
-// ---------- search + sort (same logic, just works on current page) ----------
+/* ---------------------- suggestions with images ---------------------- */
 
-function getFilteredAndSortedListings() {
-  const input = document.querySelector("#auctionSearch");
-  const sortSelect = document.querySelector("#sortSelect");
+function clearSuggestions() {
+  if (!suggestionsEl) return;
+  suggestionsEl.innerHTML = "";
+  suggestionsEl.style.display = "none";
+}
 
-  let results = [...allListings];
+function updateSuggestions(term) {
+  if (!suggestionsEl) return;
 
-  // filter by search query
-  const query = input?.value.trim().toLowerCase() || "";
-  if (query) {
-    results = results.filter((listing) => {
-      const title = listing.title?.toLowerCase() || "";
-      const description = listing.description?.toLowerCase() || "";
-      return title.includes(query) || description.includes(query);
-    });
+  const q = term.trim().toLowerCase();
+
+  // show suggestions only if there is at least 1 char
+  if (!q) {
+    clearSuggestions();
+    return;
   }
 
-  // sort
-  const sortValue = sortSelect?.value || "newest";
+  const matches = allListings
+    .filter((item) => {
+      const title = item.title?.toLowerCase() || "";
+      const desc = item.description?.toLowerCase() || "";
+      return title.includes(q) || desc.includes(q);
+    })
+    .slice(0, 6); // up to 6 suggestions
 
-  if (sortValue === "newest") {
-    results.sort((a, b) => {
-      const da = new Date(a.created);
-      const db = new Date(b.created);
-      return db - da; // newest first
-    });
-  } else if (sortValue === "endingSoon") {
-    results.sort((a, b) => {
-      const ea = a.endsAt ? new Date(a.endsAt) : null;
-      const eb = b.endsAt ? new Date(b.endsAt) : null;
-
-      if (!ea && !eb) return 0;
-      if (!ea) return 1;
-      if (!eb) return -1;
-      return ea - eb;
-    });
-  } else if (sortValue === "mostBids") {
-    results.sort((a, b) => {
-      const ca = a._count?.bids ?? 0;
-      const cb = b._count?.bids ?? 0;
-      return cb - ca;
-    });
+  if (!matches.length) {
+    clearSuggestions();
+    return;
   }
 
-  return results;
+  const markup = `
+    <ul class="bh-search-suggestions-list">
+      ${matches
+        .map((item) => {
+          const images = Array.isArray(item.media) ? item.media : [];
+          const img = images[0] || null;
+          const timeText = item.endsAt
+            ? formatTimeRemaining(item.endsAt)
+            : "No end time";
+          const bidsCount = Array.isArray(item.bids)
+            ? item.bids.length
+            : 0;
+
+          return `
+            <li class="bh-search-suggestion-card" data-id="${item.id}">
+              <div class="bh-search-suggestion-thumb">
+                ${
+                  img && img.url
+                    ? `<img src="${img.url}" alt="${img.alt || item.title || "Listing image"}" />`
+                    : `<span>Image</span>`
+                }
+              </div>
+              <div class="bh-search-suggestion-body">
+                <div class="bh-search-suggestion-title">
+                  ${item.title}
+                </div>
+                <div class="bh-search-suggestion-meta">
+                  ${timeText} · ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
+                </div>
+              </div>
+            </li>
+          `;
+        })
+        .join("")}
+    </ul>
+  `;
+
+  suggestionsEl.innerHTML = markup;
+  suggestionsEl.style.display = "block";
+
+  // click = go straight to listing page
+  suggestionsEl
+    .querySelectorAll(".bh-search-suggestion-card")
+    .forEach((el) => {
+      el.addEventListener("click", () => {
+        const id = el.getAttribute("data-id");
+        if (id) {
+          window.location.href = `/auction/single-listing-page.html?id=${id}`;
+        }
+      });
+    });
 }
 
-function applyFiltersAndRender() {
-  const finalList = getFilteredAndSortedListings();
-  renderListings(finalList);
-}
+/* ---------------------- API fetch ---------------------- */
 
-// ---------- load a page from the API ----------
+async function fetchAllListings() {
+  const url = `${AUCTION_URL}/listings?_active=true&_bids=true&limit=100`;
 
-async function loadPage(page = 1) {
-  const grid = document.querySelector("#auctions-grid");
-  if (!grid) return;
+  const res = await fetch(url, {
+    headers: {
+      "X-Noroff-API-Key": API_KEY,
+    },
+  });
 
-  renderSkeletons(6);
+  const json = await res.json();
 
-  try {
-    const { data, meta } = await getActiveListings({ limit: 24, page });
-    allListings = data;
-    currentPage = meta?.currentPage ?? page;
-    totalPages = meta?.pageCount ?? 1;
-
-    applyFiltersAndRender();
-    renderPagination();
-  } catch (error) {
-    console.error(error);
-    grid.innerHTML = `<p class="text-danger small">
-      Could not load auctions. Please try again later.
-    </p>`;
-    const paginationContainer = document.querySelector("#auctions-pagination");
-    if (paginationContainer) {
-      paginationContainer.innerHTML = "";
-    }
+  if (!res.ok) {
+    throw new Error(
+      json?.errors?.[0]?.message || "Could not load auctions."
+    );
   }
+
+  return json.data || [];
 }
 
-// ---------- init ----------
+/* ---------------------- init ---------------------- */
 
 async function initAuctionsPage() {
-  await loadPage(1);
+  const user = getUser();
+  if (createListingBtn && user) {
+    createListingBtn.classList.remove("d-none");
+  }
 
-  const form = document.querySelector("#auctionSearchForm");
-  const input = document.querySelector("#auctionSearch");
-  const clearBtn = document.querySelector("#clearSearch");
-  const sortSelect = document.querySelector("#sortSelect");
+  showSkeletons();
 
-  if (form) {
-    form.addEventListener("submit", (event) => {
+  try {
+    allListings = await fetchAllListings();
+    applyFilters();
+    renderListingsPage(1);
+  } catch (error) {
+    console.error(error);
+    if (gridEl) {
+      gridEl.innerHTML = `
+        <div class="col-12">
+          <div class="alert alert-danger" role="alert">
+            ${error.message}
+          </div>
+        </div>
+      `;
+    }
+    if (paginationEl) paginationEl.innerHTML = "";
+  }
+
+  // normal search submit
+  if (searchForm) {
+    searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      applyFiltersAndRender();
+      currentSearch = searchInput?.value.trim() || "";
+      currentPage = 1;
+      applyFilters();
+      renderListingsPage(1);
+      clearSuggestions();
     });
   }
 
-  if (input) {
-    input.addEventListener("input", () => {
-      applyFiltersAndRender();
+  // live suggestions from 1 letter, with images
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value;
+      updateSuggestions(term);
+    });
+
+    // hide suggestions on blur (little delay to allow click)
+    searchInput.addEventListener("blur", () => {
+      setTimeout(() => {
+        clearSuggestions();
+      }, 150);
     });
   }
 
+  // clear search
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      if (searchInput) searchInput.value = "";
+      currentSearch = "";
+      currentPage = 1;
+      applyFilters();
+      renderListingsPage(1);
+      clearSuggestions();
+    });
+  }
+
+  // sort change
   if (sortSelect) {
     sortSelect.addEventListener("change", () => {
-      applyFiltersAndRender();
+      currentSort = sortSelect.value;
+      currentPage = 1;
+      applyFilters();
+      renderListingsPage(1);
     });
   }
 
-  if (clearBtn && input) {
-    clearBtn.addEventListener("click", () => {
-      input.value = "";
-      applyFiltersAndRender();
-    });
-  }
-
-  setupPaginationEvents();
+  // click outside to close suggestions
+  document.addEventListener("click", (event) => {
+    if (
+      !suggestionsEl ||
+      !searchInput ||
+      suggestionsEl.contains(event.target) ||
+      searchInput.contains(event.target)
+    ) {
+      return;
+    }
+    clearSuggestions();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", initAuctionsPage);

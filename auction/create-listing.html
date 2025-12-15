@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BidHub | Create listing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta
+      name="description"
+      content="Create a new auction listing on BidHub. Add a title, description, end time and image URL."
+    />
+    <meta name="author" content="Your Name" />
+
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <!-- Header injected by JS -->
+    <header id="site-header"></header>
+
+    <main class="bh-page">
+      <div class="container">
+        <!-- Page heading -->
+        <header class="mb-3">
+          <h1 class="mb-1">Create listing</h1>
+          <p class="text-muted mb-0 small">
+            Add a new item to auction. Students can view it immediately and
+            start bidding when the timer goes live.
+          </p>
+        </header>
+
+        <!-- Alert (error / success) -->
+        <div
+          id="createListingAlert"
+          class="alert d-none"
+          role="alert"
+        ></div>
+
+        <!-- CREATE LISTING FORM -->
+        <section>
+          <article class="bh-card p-3 p-lg-4">
+            <form id="createListingForm" novalidate>
+              <!-- Title -->
+              <div class="mb-3">
+                <label for="title" class="form-label bh-form-label">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  class="form-control"
+                  placeholder="Vintage camera, design books bundle, etc."
+                  required
+                />
+              </div>
+
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label bh-form-label">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Describe the condition, what's included, and anything bidders should know."
+                ></textarea>
+              </div>
+
+              <!-- End date/time -->
+              <div class="mb-3">
+                <label for="endsAt" class="form-label bh-form-label">
+                  Auction ends
+                </label>
+                <input
+                  type="datetime-local"
+                  id="endsAt"
+                  name="endsAt"
+                  class="form-control"
+                  required
+                />
+                <div class="form-text small">
+                  Choose when the auction should end. Must be in the future.
+                </div>
+              </div>
+
+              <!-- Image URL (single) -->
+              <div class="mb-3">
+                <label for="imageUrl" class="form-label bh-form-label">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  id="imageUrl"
+                  name="imageUrl"
+                  class="form-control"
+                  placeholder="https://example.com/image.jpg"
+                />
+                <div class="form-text small">
+                  Paste a direct URL to an image (JPG, PNG, etc.). Optional but
+                  recommended.
+                </div>
+              </div>
+
+              <!-- Image alt text -->
+              <div class="mb-4">
+                <label for="imageAlt" class="form-label bh-form-label">
+                  Image alt text
+                </label>
+                <input
+                  type="text"
+                  id="imageAlt"
+                  name="imageAlt"
+                  class="form-control"
+                  placeholder="Short description of the image (for accessibility)"
+                />
+              </div>
+
+              <!-- Submit -->
+              <div class="d-flex justify-content-end gap-2">
+                <a href="/auction/auctions.html" class="bh-btn-outline">
+                  Cancel
+                </a>
+                <button
+                  type="submit"
+                  id="createListingSubmit"
+                  class="bh-btn-primary"
+                >
+                  Create listing
+                </button>
+              </div>
+            </form>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer injected by JS -->
+    <footer id="site-footer" class="bh-footer"></footer>
+
+    <!-- JS -->
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/auction/create-listing.js"></script>
+  </body>
+</html>

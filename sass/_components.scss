@@ -21,6 +21,46 @@
 .bh-logo-img {
   height: 48px; // tweak to match your Figma
 }
+.bh-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;       // 🔵 makes it a circle
+  overflow: hidden;
+  background-color: v.$bh-color-border;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: v.$bh-color-text-muted; // or a suitable muted text color
+}
+
+.bh-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Bigger avatar (for profile page)
+.bh-avatar-lg {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;       // 🔵 circle
+  overflow: hidden;
+  background-color: v.$bh-color-border;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: v.$bh-color-text-muted;
+}
+
+.bh-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 
 /* HERO */
@@ -199,6 +239,76 @@
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 
+.bh-search-main {
+  position: relative;
+}
+
+.bh-search-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  background-color: v.$bh-color-surface;
+  border: 1px solid v.$bh-color-border;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  z-index: 20;
+  max-height: 260px;
+  overflow-y: auto;
+  font-size: 0.875rem;
+  display: none; // JS will switch to block when there are suggestions
+}
+
+.bh-search-suggestions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.bh-search-suggestion-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.bh-search-suggestion-card:hover {
+  background-color: v.$bh-color-page-bg;
+}
+
+.bh-search-suggestion-thumb {
+  width: 56px;
+  height: 44px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: v.$bh-color-page-bg;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: v.$bh-color-text-muted;
+}
+
+.bh-search-suggestion-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bh-search-suggestion-title {
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+}
+
+.bh-search-suggestion-meta {
+  font-size: 0.75rem;
+  color: v.$bh-color-text-muted;
+}
+
+
 // Tag pill under title
 .bh-tag-pill {
   display: inline-flex;
@@ -256,20 +366,65 @@
   border: 1px solid v.$bh-color-border;
 }
 
-/* Skeletons for single listing (we used these in JS) */
-.bh-listing-skeleton {
-  animation: bh-skeleton-pulse 1.2s ease-in-out infinite;
+.bh-profile-header-card {
+  overflow: hidden;
+  background-color: v.$bh-color-surface;
 }
 
-.bh-skeleton-hero-img {
-  background-color: v.$bh-color-border;
-  border-radius: v.$bh-radius-card;
-  height: 260px;
+.bh-profile-banner {
+  height: 96px;
+  background-color: v.$bh-color-page-bg; // fallback if no banner
+  border-bottom: 1px solid v.$bh-color-border;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.bh-skeleton-thumb-sm {
-  background-color: v.$bh-color-border;
-  border-radius: v.$bh-radius-card;
-  width: 70px;
-  height: 70px;
+.bh-profile-header-body {
+  padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.bh-profile-avatar-wrap {
+  margin-top: -2.5rem;
+}
+
+// .bh-avatar-lg {
+//   width: 72px;
+//   height: 72px;
+//   border-radius: 50%;
+//   overflow: hidden;
+//   background-color: v.$bh-color-surface;
+//   border: 4px solid v.$bh-color-surface;
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: 1.5rem;
+//   font-weight: 600;
+//   color: v.$bh-color-muted;
+// }
+
+.bh-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Thumbnail placeholder in Recent listing / Recent bids
+.bh-profile-item-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+}
+
+.bh-profile-thumb {
+  width: 72px;
+  height: 56px;
+  border-radius: 0.75rem;
+  background-color: v.$bh-color-page-bg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: v.$bh-color-text-muted;
 }

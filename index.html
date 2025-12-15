@@ -1,52 +1,28 @@
-<!doctype html>
 <html lang="en">
   <head>
-  <meta charset="UTF-8" />
-  <title>BidHub | Student auctions for Noroff</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="BidHub is a student-focused auction platform for Noroff students. Browse live auctions, create listings, and bid using credits instead of cash."
-  />
-   <meta name="author" content="Shamia" />
-    <link rel="stylesheet" href="./css/styles.css" />
+    <meta charset="UTF-8" />
+    <title>BidHub | Student Auctions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="BidHub is a student-focused auction platform for Noroff students. Browse live auctions, view listings and bid using credits instead of cash."
+    />
+    <meta name="author" content="Your Name" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <!-- Bootstrap JS for navbar hamburger -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
   </head>
   <body>
-    <!-- NAVBAR (logged out) -->
-    <nav class="navbar bh-navbar fixed-top">
-  <div class="container d-flex align-items-center">
-    <!-- Left: logo -->
-    <a
-      href="./index.html"
-      class="navbar-brand d-flex align-items-center bh-navbar-logo"
-    >
-      <img
-        src="./img/bidhub_logo_transparent.png"
-        alt="BidHub logo"
-        class="bh-logo-img me-2"
-      />
-      <span class="visually-hidden">BidHub</span>
-    </a>
-
-    <!-- Center: nav links -->
-    <ul class="nav mx-auto gap-3">
-      <li class="nav-item">
-        <a href="./index.html" class="nav-link bh-nav-link active">Home</a>
-      </li>
-      <li class="nav-item">
-        <a href="./auction/auctions.html" class="nav-link bh-nav-link">
-          Auctions
-        </a>
-      </li>
-    </ul>
-
-    <!-- Right: auth buttons -->
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <a href="./auth/login.html" class="bh-btn-outline">Login</a>
-      <a href="./auth/register.html" class="bh-btn-primary">Register</a>
-    </div>
-  </div>
-</nav>
+    <!-- Header will be filled by header.js -->
+    <header id="site-header"></header>
 
 
     <!-- MAIN -->
@@ -78,9 +54,9 @@
               </div>
 
               <!-- Right: sample listing card -->
-              <div class="col-lg-5">
+             <div class="col-lg-5">
   <article class="bh-card bh-hero-listing-card p-3" id="hero-featured-card">
-    <!-- This content will be replaced by JS -->
+    <!-- JS will replace this content -->
     <div class="bh-hero-image-placeholder mb-3">
       <span>Image</span>
     </div>
@@ -89,6 +65,7 @@
     <button class="bh-btn-primary btn-sm" disabled>View listing</button>
   </article>
 </div>
+
 
             </div>
           </div>
@@ -132,74 +109,30 @@
         </section>
 
         <!-- FEATURED AUCTIONS -->
-        <section id="featured" class="pt-2 pb-4 pt-lg-3 pb-lg-4">
+        <section id="featured" class="py-4 py-lg-5">
+  <div
+    class="d-flex flex-wrap justify-content-between align-items-center mb-3"
+  >
+    <h2 class="mb-0">Featured auctions</h2>
+    <a href="./auction/auctions.html" class="bh-link-muted">
+      View all auctions →
+    </a>
+  </div>
 
-          <div
-            class="d-flex flex-wrap justify-content-between align-items-center mb-3"
-          >
-            <h2 class="mb-0">Featured auctions</h2>
-            <a href="./auction/auctions.html" class="bh-link-muted">
-              View all auctions →
-            </a>
-          </div>
+  <!-- This div MUST have this id -->
+  <div id="featured-auctions-grid" class="row gy-4">
+    <!-- JS will insert skeletons and then cards here -->
+  </div>
+</section>
 
-          <!-- Filled by JS using API -->
-          <div id="featured-auctions-grid" class="row gy-4">
-            <p class="text-muted">Loading featured auctions…</p>
-          </div>
-        </section>
       </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="bh-footer">
-      <div class="container">
-        <div class="row gy-4 pb-3">
-          <!-- Brand -->
-          <div class="col-md-3">
-            <h2 class="h5 mb-2 bh-footer-title">BidHub</h2>
-            <p class="small mb-0 bh-footer-text">
-              A student-focused auction platform for buying and selling with
-              credits.
-            </p>
-          </div>
-
-          <!-- Explore -->
-          <div class="col-md-3">
-            <h3 class="small text-uppercase mb-2 bh-footer-title">Explore</h3>
-            <ul class="list-unstyled small mb-0">
-              <li><a class="bh-footer-link" href="./auction/auctions.html">Auctions</a></li>
-              <li><a class="bh-footer-link" href="./profile/my-listings.html">My listings</a></li>
-              <li><a class="bh-footer-link" href="./profile/my-bids.html">My bids</a></li>
-            </ul>
-          </div>
-
-          <!-- Account -->
-          <div class="col-md-3">
-            <h3 class="small text-uppercase mb-2 bh-footer-title">Account</h3>
-            <ul class="list-unstyled small mb-0">
-              <li><a class="bh-footer-link" href="./auth/login.html">Log in</a></li>
-              <li><a class="bh-footer-link" href="./auth/register.html">Register</a></li>
-            </ul>
-          </div>
-
-          <!-- Help -->
-          <div class="col-md-3">
-            <h3 class="small text-uppercase mb-2 bh-footer-title">Help</h3>
-            <ul class="list-unstyled small mb-0">
-              <li><a class="bh-footer-link" href="#">Support</a></li>
-              <li><a class="bh-footer-link" href="#">Terms</a></li>
-              <li><a class="bh-footer-link" href="#">Privacy</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <p class="small mb-0 bh-footer-text">© 2025 BidHub.</p>
-      </div>
-    </footer>
+    <footer id="site-footer" class="bh-footer"></footer>
 
     <!-- JS -->
-    <!-- <script type="module" src="./js/main.js"></script> -->
+    <script type="module" src="./js/main.js"></script>
     <script type="module" src="./js/auction/landing.js"></script>
   </body>
 </html>
