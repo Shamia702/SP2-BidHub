@@ -1,7 +1,5 @@
-@use "variables";
-
 @use "bootstrap/scss/bootstrap";
-
+@use "variables" as v;
 @use "layout";
 @use "components";
 @use "utilities";
