@@ -363,7 +363,7 @@ async function initAuctionsPage() {
       renderListingsPage(1);
     });
   }
-  
+
   document.addEventListener("click", (event) => {
     if (
       !suggestionsEl ||

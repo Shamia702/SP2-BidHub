@@ -1,6 +1,5 @@
 import { renderHeader } from "./components/header.js";
 import { renderFooter } from "./components/footer.js";
-import { getUser } from "./utils/storage.js";
 import { formatTimeRemaining } from "./utils/format.js";
 
 function updateCountdowns() {

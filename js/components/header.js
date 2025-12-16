@@ -14,7 +14,7 @@ export function renderHeader() {
             class="navbar-brand d-flex align-items-center bh-navbar-logo"
           >
             <img
-              src="/img/bidhub_logo_transparent.png"
+              src="/images/bidhub_logo_transparent.png"
               alt="BidHub logo"
               class="bh-logo-img me-2"
             />
@@ -76,7 +76,7 @@ const initials = name?.[0]?.toUpperCase() || "U";
           class="navbar-brand d-flex align-items-center bh-navbar-logo"
         >
           <img
-            src="/img/bidhub_logo_transparent.png"
+            src="/images/bidhub_logo_transparent.png"
             alt="BidHub logo"
             class="bh-logo-img me-2"
           />
