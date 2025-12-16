@@ -282,6 +282,30 @@ function renderBidSection(listing, user, highestBid) {
     );
   }
 }
+function getBidderDisplayName(bid) {
+  // New v2 API: bidder can be an object
+  if (bid.bidder && typeof bid.bidder === "object") {
+    return (
+      bid.bidder.name ||
+      bid.bidder.username ||
+      bid.bidder.email ||
+      "unknown"
+    );
+  }
+
+  // If API gives a simple string
+  if (typeof bid.bidder === "string") {
+    return bid.bidder;
+  }
+
+  // Older / alternative field
+  if (typeof bid.bidderName === "string") {
+    return bid.bidderName;
+  }
+
+  return "unknown";
+}
+
 
 function renderBidsList(listing) {
   const container = document.querySelector("#listing-bids");
@@ -316,8 +340,9 @@ function renderBidsList(listing) {
             <div>
               <strong>${bid.amount} credits</strong>
               <span class="text-muted">
-                by @${bid.bidderName || bid.bidder || "unknown"}
-              </span>
+  by @${getBidderDisplayName(bid)}
+</span>
+
             </div>
             <span class="text-muted">${formatBidDate(bid.created)}</span>
           </li>
@@ -328,6 +353,7 @@ function renderBidsList(listing) {
     </section>
   `;
 }
+
 
 function showBidAlert(type, message) {
   const alert = document.querySelector("#bidAlert");
