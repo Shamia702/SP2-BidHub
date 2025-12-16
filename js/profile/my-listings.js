@@ -1,5 +1,3 @@
-// js/profile/my-listings.js
-
 import { AUCTION_URL, API_KEY } from "../api/config.js";
 import { getUser, getToken } from "../utils/storage.js";
 import { formatTimeRemaining } from "../utils/format.js";
@@ -8,9 +6,6 @@ const gridEl = document.querySelector("#my-listings-grid");
 const alertEl = document.querySelector("#myListingsAlert");
 
 let myListings = [];
-
-/* ---------- helpers ---------- */
-
 function requireAuth() {
   const user = getUser();
   const token = getToken();
@@ -36,13 +31,13 @@ function clearAlert() {
   alertEl.textContent = "";
 }
 
-function showSkeletons(count = 3) {
+function showSkeletons(count = 6) {
   if (!gridEl) return;
 
   const skeletons = Array.from({ length: count })
     .map(
       () => `
-      <div class="col-12">
+      <div class="col-md-6 col-lg-4">
         <article class="bh-card p-3 bh-skeleton-card">
           <div class="bh-skeleton-thumb mb-3"></div>
           <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
@@ -74,6 +69,7 @@ function isListingActive(listing) {
   return end > now;
 }
 
+
 function buildListingCard(listing) {
   const images = Array.isArray(listing.media) ? listing.media : [];
   const mainImage = images[0] || null;
@@ -89,55 +85,54 @@ function buildListingCard(listing) {
   const active = isListingActive(listing);
 
   return `
-    <div class="col-12">
-      <article class="bh-card p-3 p-lg-4 d-flex flex-column flex-md-row align-items-md-center gap-3">
-        <!-- Thumb -->
-        <div class="flex-shrink-0" style="width: 120px;">
+    <div class="col-md-6 col-lg-4">
+      <article class="bh-card h-100 d-flex flex-column p-3">
+        <div class="mb-3">
           ${
             mainImage && mainImage.url
-              ? `<img src="${mainImage.url}" alt="${mainImage.alt || listing.title || "Listing image"}" class="img-fluid rounded-3 w-100" style="height: 90px; object-fit: cover;" />`
-              : `<div class="bh-skeleton-thumb mb-0" style="height: 90px;"></div>`
+              ? `<img src="${mainImage.url}" alt="${mainImage.alt || listing.title || "Listing image"}"
+                   class="img-fluid rounded-3 w-100"
+                   style="max-height: 180px; object-fit: cover;" />`
+              : `<div class="bh-skeleton-thumb mb-0"></div>`
           }
         </div>
 
-        <!-- Info -->
-        <div class="flex-grow-1">
-          <h2 class="h6 mb-1">${listing.title}</h2>
-          <p class="text-muted small mb-1">
-            ${
-              active
-                ? `<span class="badge bg-success-subtle text-success border border-success-subtle me-1">Active</span>`
-                : `<span class="badge bg-light text-muted border border-secondary-subtle me-1">Ended</span>`
-            }
-            ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
-          </p>
-          <p class="text-muted small mb-0">
-            Current highest bid: <strong>${highestBid} credits</strong>
-            ${
-              listing.endsAt
-                ? ` · <span class="bh-countdown" data-ends-at="${listing.endsAt}">${timeText}</span>`
-                : ""
-            }
-          </p>
-        </div>
-
-        <!-- Actions -->
-        <div class="d-flex flex-md-column gap-2 ms-md-3">
+        <!-- title + meta -->
+        <h2 class="h6 mb-1">${listing.title}</h2>
+        <p class="text-muted small mb-1">
+          ${
+            active
+              ? `<span class="badge bg-success-subtle text-success border border-success-subtle me-1">Active</span>`
+              : `<span class="badge bg-light text-muted border border-secondary-subtle me-1">Ended</span>`
+          }
+          ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
+        </p>
+        <p class="text-muted small mb-3">
+          Current highest bid: <strong>${highestBid} credits</strong>
+          ${
+            listing.endsAt
+              ? ` · <span class="bh-countdown" data-ends-at="${listing.endsAt}">
+                   ${timeText}
+                 </span>`
+              : ""
+          }
+        </p>
+        <div class="mt-auto d-flex flex-wrap gap-2">
           <a
             href="/auction/single-listing-page.html?id=${listing.id}"
-            class="bh-btn-primary btn-sm text-center"
+            class="bh-btn-primary btn-sm flex-grow-1 text-center"
           >
             View
           </a>
           <a
             href="/auction/edit-listing.html?id=${listing.id}"
-            class="bh-btn-outline btn-sm text-center"
+            class="bh-btn-outline btn-sm flex-grow-1 text-center"
           >
             Edit
           </a>
           <button
             type="button"
-            class="btn btn-link btn-sm text-danger p-0 text-decoration-none bh-delete-listing"
+            class="btn btn-link btn-sm text-danger p-0 text-decoration-none ms-auto bh-delete-listing"
             data-id="${listing.id}"
           >
             Delete
@@ -148,13 +143,11 @@ function buildListingCard(listing) {
   `;
 }
 
-/* ---------- API ---------- */
-
 async function fetchMyListings(name) {
   const token = getToken();
 
   const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}?_listings=true`,
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}?_listings=true&_bids=true`,
     {
       headers: {
         "X-Noroff-API-Key": API_KEY,
@@ -203,10 +196,8 @@ async function deleteListing(id) {
       return;
     }
 
-    // remove from local array and re-render
     myListings = myListings.filter((item) => item.id !== id);
     renderListings();
-
     showAlert("success", "Listing deleted successfully.");
   } catch (error) {
     console.error(error);
@@ -217,16 +208,12 @@ async function deleteListing(id) {
   }
 }
 
-/* ---------- render ---------- */
-
 function attachDeleteHandlers() {
   const buttons = document.querySelectorAll(".bh-delete-listing");
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
-      if (id) {
-        deleteListing(id);
-      }
+      if (id) deleteListing(id);
     });
   });
 }
@@ -254,8 +241,6 @@ function renderListings() {
   attachDeleteHandlers();
 }
 
-/* ---------- init ---------- */
-
 async function initMyListings() {
   const user = requireAuth();
   if (!user) return;
@@ -269,9 +254,7 @@ async function initMyListings() {
   } catch (error) {
     console.error(error);
     showAlert("danger", error.message);
-    if (gridEl) {
-      gridEl.innerHTML = "";
-    }
+    if (gridEl) gridEl.innerHTML = "";
   }
 }
 

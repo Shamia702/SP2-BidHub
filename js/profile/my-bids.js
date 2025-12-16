@@ -1,13 +1,9 @@
-// js/profile/my-bids.js
-
 import { AUCTION_URL, API_KEY } from "../api/config.js";
 import { getUser, getToken } from "../utils/storage.js";
 import { formatTimeRemaining } from "../utils/format.js";
 
 const alertEl = document.querySelector("#myBidsAlert");
-const contentEl = document.querySelector("#my-bids-content");
-
-/* ---------- helpers ---------- */
+const gridEl = document.querySelector("#my-bids-grid");
 
 function requireAuth() {
   const user = getUser();
@@ -34,20 +30,30 @@ function clearAlert() {
   alertEl.textContent = "";
 }
 
-function buildSkeleton() {
-  return `
-    <div class="bh-listing-skeleton">
-      <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
-      <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
-      <div class="bh-skeleton-line bh-skeleton-line-sm mb-1"></div>
-      <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
-    </div>
-  `;
+function showSkeletons(count = 6) {
+  if (!gridEl) return;
+
+  const skeletons = Array.from({ length: count })
+    .map(
+      () => `
+      <div class="col-md-6 col-lg-4">
+        <article class="bh-card p-3 bh-skeleton-card">
+          <div class="bh-skeleton-thumb mb-3"></div>
+          <div class="bh-skeleton-line bh-skeleton-line-lg mb-2"></div>
+          <div class="bh-skeleton-line bh-skeleton-line-sm mb-1"></div>
+          <div class="bh-skeleton-line bh-skeleton-line-sm"></div>
+        </article>
+      </div>
+    `
+    )
+    .join("");
+
+  gridEl.innerHTML = skeletons;
 }
 
 function getListingIdFromBid(bid) {
-  if (bid.listingId) return bid.listingId;
   if (bid.listing && bid.listing.id) return bid.listing.id;
+  if (bid.listingId) return bid.listingId;
   return null;
 }
 
@@ -62,13 +68,31 @@ function getListingEndsAtFromBid(bid) {
   return null;
 }
 
-/* ---------- API ---------- */
+function getListingThumbFromBid(bid) {
+  if (!bid.listing || !Array.isArray(bid.listing.media)) return null;
+  const img = bid.listing.media[0] || null;
+  if (!img || !img.url) return null;
+  return img;
+}
 
-async function fetchMyProfileWithBids(name) {
+function getHighestBid(bid) {
+  const listingBids = Array.isArray(bid.listing?.bids)
+    ? bid.listing.bids
+    : [];
+  if (!listingBids.length) return 0;
+  return listingBids.reduce(
+    (max, b) => (b.amount > max ? b.amount : max),
+    0
+  );
+}
+
+async function fetchMyBids(name) {
   const token = getToken();
 
   const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}?_bids=true`,
+    `${AUCTION_URL}/profiles/${encodeURIComponent(
+      name
+    )}/bids?_listings=true`,
     {
       headers: {
         "X-Noroff-API-Key": API_KEY,
@@ -85,12 +109,9 @@ async function fetchMyProfileWithBids(name) {
     );
   }
 
-  return json.data;
+  return Array.isArray(json.data) ? json.data : [];
 }
 
-/* ---------- render ---------- */
-
-// group bids so we show latest bid per listing
 function getLatestBidsByListing(bids) {
   const map = new Map();
 
@@ -114,15 +135,89 @@ function getLatestBidsByListing(bids) {
   return Array.from(map.values());
 }
 
-function renderBids(profile) {
-  if (!contentEl) return;
+function buildBidCard(bid) {
+  const listingId = getListingIdFromBid(bid);
+  const listingTitle = getListingTitleFromBid(bid);
+  const endsAt = getListingEndsAtFromBid(bid);
+  const thumb = getListingThumbFromBid(bid);
+  const timeText = endsAt ? formatTimeRemaining(endsAt) : "No end time";
+  const highestBid = getHighestBid(bid);
 
-  const bids = Array.isArray(profile.bids) ? profile.bids : [];
+  const createdText = bid.created
+    ? new Date(bid.created).toLocaleString()
+    : "";
+
+  return `
+    <div class="col-md-6 col-lg-4">
+      <article class="bh-card h-100 d-flex flex-column p-3">
+        <!-- image -->
+        <div class="mb-3">
+          ${
+            thumb
+              ? `<img src="${thumb.url}" alt="${thumb.alt || listingTitle || "Listing image"}"
+                   class="img-fluid rounded-3 w-100"
+                   style="max-height: 180px; object-fit: cover;" />`
+              : `<div class="bh-skeleton-thumb mb-0"></div>`
+          }
+        </div>
+
+        <!-- title + meta -->
+        <h2 class="h6 mb-1">${listingTitle}</h2>
+        <p class="text-muted small mb-1">
+          Your bid: <strong>${bid.amount} credits</strong>
+        </p>
+        <p class="text-muted small mb-1">
+          Current highest bid: <strong>${highestBid} credits</strong>
+        </p>
+        <p class="text-muted small mb-3">
+          ${
+            endsAt
+              ? `<span class="bh-countdown" data-ends-at="${endsAt}">
+                   ${timeText}
+                 </span>`
+              : "No end time"
+          }
+        </p>
+        <p class="text-muted small mb-3">
+          Placed: ${createdText}
+        </p>
+
+        <!-- buttons -->
+        <div class="mt-auto d-flex flex-wrap gap-2">
+          ${
+            listingId
+              ? `
+                <a
+                  href="/auction/single-listing-page.html?id=${listingId}"
+                  class="bh-btn-primary btn-sm flex-grow-1 text-center"
+                >
+                  View listing
+                </a>
+                <a
+                  href="/profile/edit-bid.html?listingId=${listingId}"
+                  class="bh-btn-outline btn-sm flex-grow-1 text-center"
+                >
+                  Edit bid
+                </a>
+              `
+              : ""
+          }
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function renderBids(bids) {
+  if (!gridEl) return;
+
   if (!bids.length) {
-    contentEl.innerHTML = `
-      <p class="text-muted small mb-0">
-        You haven't placed any bids yet.
-      </p>
+    gridEl.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-light mb-0" role="alert">
+          You haven't placed any bids yet.
+        </div>
+      </div>
     `;
     return;
   }
@@ -131,81 +226,23 @@ function renderBids(profile) {
     (a, b) => new Date(b.created) - new Date(a.created)
   );
 
-  const itemsMarkup = latestBids
-    .map((bid) => {
-      const listingId = getListingIdFromBid(bid);
-      const listingTitle = getListingTitleFromBid(bid);
-      const endsAt = getListingEndsAtFromBid(bid);
-
-      const timeText = endsAt ? formatTimeRemaining(endsAt) : "No end time";
-
-      return `
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="me-3">
-            <div class="fw-semibold small mb-1">
-              ${listingTitle}
-            </div>
-            <div class="text-muted small mb-1">
-              Your bid: <strong>${bid.amount} credits</strong>
-            </div>
-            <div class="text-muted small">
-              ${
-                bid.created
-                  ? new Date(bid.created).toLocaleString()
-                  : ""
-              }
-            </div>
-          </div>
-          <div class="text-end small">
-            ${
-              endsAt
-                ? `<div class="mb-1">
-                    <span class="bh-countdown" data-ends-at="${endsAt}">
-                      ${timeText}
-                    </span>
-                  </div>`
-                : ""
-            }
-            ${
-              listingId
-                ? `<a href="/auction/listing.html?id=${listingId}" class="bh-link-muted">
-                     View listing
-                   </a>`
-                : ""
-            }
-          </div>
-        </li>
-      `;
-    })
-    .join("");
-
-  contentEl.innerHTML = `
-    <ul class="list-group list-group-flush bh-bids-list">
-      ${itemsMarkup}
-    </ul>
-  `;
+  gridEl.innerHTML = latestBids.map(buildBidCard).join("");
 }
-
-/* ---------- init ---------- */
 
 async function initMyBids() {
   const user = requireAuth();
   if (!user) return;
 
-  if (contentEl) {
-    contentEl.innerHTML = buildSkeleton();
-  }
+  showSkeletons();
 
   try {
-    const profile = await fetchMyProfileWithBids(user.name);
+    const bids = await fetchMyBids(user.name);
     clearAlert();
-    renderBids(profile);
+    renderBids(bids);
   } catch (error) {
     console.error(error);
     showAlert("danger", error.message);
-    if (contentEl) {
-      contentEl.innerHTML = "";
-    }
+    if (gridEl) gridEl.innerHTML = "";
   }
 }
 

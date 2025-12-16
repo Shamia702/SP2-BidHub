@@ -1,39 +1,78 @@
-// js/auth/login.js
-import { saveAuth } from "../utils/storage.js";
+import { API_BASE, AUCTION_URL, API_KEY } from "../api/config.js";
+import { saveAuth, updateUser } from "../utils/storage.js";
 
-const API_BASE_URL = "https://v2.api.noroff.dev"; // Noroff API base
+const form = document.querySelector("#loginForm");
+const alertBox = document.querySelector("#loginAlert");
+const submitBtn = document.querySelector("#loginSubmit");
 
-function showLoginError(message) {
-  const alert = document.querySelector("#loginAlert");
-  if (!alert) return;
-  alert.textContent = message;
-  alert.classList.remove("d-none");
+function showAlert(type, message) {
+  if (!alertBox) return;
+  alertBox.className = `alert alert-${type}`;
+  alertBox.textContent = message;
+  alertBox.classList.remove("d-none");
 }
 
-function clearLoginError() {
-  const alert = document.querySelector("#loginAlert");
-  if (!alert) return;
-  alert.textContent = "";
-  alert.classList.add("d-none");
+function clearAlert() {
+  if (!alertBox) return;
+  alertBox.classList.add("d-none");
+  alertBox.textContent = "";
 }
 
-async function handleLoginSubmit(event) {
+async function fetchProfile(name, token) {
+  const res = await fetch(
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}`,
+    {
+      headers: {
+        "X-Noroff-API-Key": API_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      json?.errors?.[0]?.message || "Could not load profile after login."
+    );
+  }
+
+  return json.data;
+}
+
+function isValidStudentEmail(email) {
+  return email.toLowerCase().endsWith("@stud.noroff.no");
+}
+
+async function handleLogin(event) {
   event.preventDefault();
-  clearLoginError();
+  clearAlert();
 
-  const form = event.target;
-  const email = form.loginEmail.value.trim();
-  const password = form.loginPassword.value.trim();
+  if (!form || !submitBtn) return;
+
+  const email = form.email.value.trim();
+  const password = form.password.value.trim();
 
   if (!email || !password) {
-    showLoginError("Please enter both email and password.");
+    showAlert("warning", "Please enter both email and password.");
     return;
   }
 
+  if (!isValidStudentEmail(email)) {
+    showAlert("warning", "You must use a @stud.noroff.no email address.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging in...";
+
   try {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Noroff-API-Key": API_KEY,
+      },
       body: JSON.stringify({ email, password }),
     });
 
@@ -41,27 +80,42 @@ async function handleLoginSubmit(event) {
 
     if (!res.ok) {
       const message =
-        json?.errors?.[0]?.message ||
-        "Login failed. Please check your email and password.";
-      showLoginError(message);
+        json?.errors?.[0]?.message || "Could not log in. Please try again.";
+      showAlert("danger", message);
       return;
     }
 
-    // json.data should contain accessToken, name, email, avatar, credits, etc.
     const authData = json.data;
     saveAuth(authData);
+    const profile = await fetchProfile(authData.name, authData.accessToken);
 
-    // Redirect after successful login
-    window.location.href = "/auction/auctions.html";
+    updateUser({
+      name: profile.name,
+      email: profile.email,
+      avatar: profile.avatar,
+      banner: profile.banner,
+      credits: profile.credits,
+      bio: profile.bio,
+    });
+
+    showAlert("success", "Login successful! Redirecting…");
+    setTimeout(() => {
+      window.location.href = "/auction/auctions.html";
+    }, 900);
   } catch (error) {
     console.error(error);
-    showLoginError("Something went wrong. Please try again later.");
+    showAlert(
+      "danger",
+      "Something went wrong while logging in. Please try again."
+    );
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Log in";
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("#loginForm");
-  if (!form) return;
-
-  form.addEventListener("submit", handleLoginSubmit);
+  if (form) {
+    form.addEventListener("submit", handleLogin);
+  }
 });

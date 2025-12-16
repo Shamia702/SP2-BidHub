@@ -1,67 +1,90 @@
-// js/auth/register.js
+import { API_BASE, AUCTION_URL, API_KEY } from "../api/config.js";
+import { saveAuth, updateUser } from "../utils/storage.js";
 
-const API_BASE_URL = "https://v2.api.noroff.dev";
+const form = document.querySelector("#registerForm");
+const alertBox = document.querySelector("#registerAlert");
+const submitBtn = document.querySelector("#registerSubmit");
 
-function showRegisterError(message) {
-  const alert = document.querySelector("#registerAlert");
-  const success = document.querySelector("#registerSuccess");
-  if (success) {
-    success.classList.add("d-none");
-    success.textContent = "";
-  }
-  if (!alert) return;
-  alert.textContent = message;
-  alert.classList.remove("d-none");
+function showAlert(type, message) {
+  if (!alertBox) return;
+  alertBox.className = `alert alert-${type}`;
+  alertBox.textContent = message;
+  alertBox.classList.remove("d-none");
 }
 
-function showRegisterSuccess(message) {
-  const alert = document.querySelector("#registerAlert");
-  const success = document.querySelector("#registerSuccess");
-  if (alert) {
-    alert.classList.add("d-none");
-    alert.textContent = "";
-  }
-  if (!success) return;
-  success.textContent = message;
-  success.classList.remove("d-none");
+function clearAlert() {
+  if (!alertBox) return;
+  alertBox.classList.add("d-none");
+  alertBox.textContent = "";
 }
 
-function clearRegisterAlerts() {
-  const alert = document.querySelector("#registerAlert");
-  const success = document.querySelector("#registerSuccess");
-  if (alert) {
-    alert.classList.add("d-none");
-    alert.textContent = "";
-  }
-  if (success) {
-    success.classList.add("d-none");
-    success.textContent = "";
-  }
+function isValidStudentEmail(email) {
+  return email.toLowerCase().endsWith("@stud.noroff.no");
 }
 
-async function handleRegisterSubmit(event) {
+async function fetchProfile(name, token) {
+  const res = await fetch(
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}`,
+    {
+      headers: {
+        "X-Noroff-API-Key": API_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      json?.errors?.[0]?.message || "Could not load profile after register."
+    );
+  }
+
+  return json.data;
+}
+
+async function handleRegister(event) {
   event.preventDefault();
-  clearRegisterAlerts();
+  clearAlert();
 
-  const form = event.target;
-  const name = form.registerName.value.trim();
-  const email = form.registerEmail.value.trim();
-  const password = form.registerPassword.value.trim();
+  if (!form || !submitBtn) return;
 
-  if (!name || !email || !password) {
-    showRegisterError("Please fill out all fields.");
+  const name = form.name.value.trim();
+  const email = form.email.value.trim();
+  const password = form.password.value.trim();
+  const confirmPassword = form.confirmPassword.value.trim();
+
+  if (!name || !email || !password || !confirmPassword) {
+    showAlert("warning", "Please fill out all the fields.");
     return;
   }
 
-  if (!email.endsWith("@stud.noroff.no")) {
-    showRegisterError("Email must end with @stud.noroff.no.");
+  if (!isValidStudentEmail(email)) {
+    showAlert("warning", "You must use a @stud.noroff.no email address.");
     return;
   }
+
+  if (password.length < 8) {
+    showAlert("warning", "Password must be at least 8 characters.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showAlert("warning", "Passwords do not match.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Registering...";
 
   try {
-    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+    const res = await fetch(`${API_BASE}/auth/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Noroff-API-Key": API_KEY,
+      },
       body: JSON.stringify({ name, email, password }),
     });
 
@@ -69,27 +92,44 @@ async function handleRegisterSubmit(event) {
 
     if (!res.ok) {
       const message =
-        json?.errors?.[0]?.message || "Registration failed. Please try again.";
-      showRegisterError(message);
+        json?.errors?.[0]?.message ||
+        "Could not register. Please check your details and try again.";
+      showAlert("danger", message);
       return;
     }
 
-    showRegisterSuccess(
-      "Registration successful! You can now log in with your new account."
-    );
+    const authData = json.data;
+    saveAuth(authData);
+    const profile = await fetchProfile(authData.name, authData.accessToken);
+
+    updateUser({
+      name: profile.name,
+      email: profile.email,
+      avatar: profile.avatar,
+      banner: profile.banner,
+      credits: profile.credits,
+      bio: profile.bio,
+    });
+
+    showAlert("success", "Registration successful! Redirecting…");
 
     setTimeout(() => {
-      window.location.href = "/auth/login.html";
-    }, 1500);
+      window.location.href = "/auction/auctions.html";
+    }, 900);
   } catch (error) {
     console.error(error);
-    showRegisterError("Something went wrong. Please try again later.");
+    showAlert(
+      "danger",
+      "Something went wrong while registering. Please try again."
+    );
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Register";
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("#registerForm");
-  if (!form) return;
-
-  form.addEventListener("submit", handleRegisterSubmit);
+  if (form) {
+    form.addEventListener("submit", handleRegister);
+  }
 });

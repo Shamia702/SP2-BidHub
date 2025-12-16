@@ -1,5 +1,3 @@
-// js/auction/create-listing.js
-
 import { AUCTION_URL, API_KEY } from "../api/config.js";
 import { getUser, getToken } from "../utils/storage.js";
 
@@ -13,7 +11,6 @@ function requireAuth() {
   const token = getToken();
 
   if (!user || !token) {
-    // Optionally we could add ?redirect=... but not required
     window.location.href = "/auth/login.html";
     return false;
   }
@@ -38,7 +35,6 @@ function setEndsAtMinValue() {
   if (!endsAtInput) return;
 
   const now = new Date();
-  // e.g. minimum 1 hour from now
   now.setHours(now.getHours() + 1);
 
   const year = now.getFullYear();
@@ -56,14 +52,14 @@ async function handleCreateListing(event) {
   clearAlert();
 
   if (!requireAuth()) return;
-
   if (!form || !submitBtn) return;
 
   const title = form.title.value.trim();
   const description = form.description.value.trim();
   const endsAtRaw = form.endsAt.value;
-  const imageUrl = form.imageUrl.value.trim();
-  const imageAlt = form.imageAlt.value.trim();
+
+  const imageUrl1 = form.imageUrl1?.value.trim() || "";
+  const imageUrl2 = form.imageUrl2?.value.trim() || "";
 
   if (!title) {
     showAlert("warning", "Please enter a title for your listing.");
@@ -88,13 +84,24 @@ async function handleCreateListing(event) {
     endsAt: endsAtDate.toISOString(),
   };
 
-  if (imageUrl) {
-    payload.media = [
-      {
-        url: imageUrl,
-        alt: imageAlt || title,
-      },
-    ];
+  const media = [];
+
+  if (imageUrl1) {
+    media.push({
+      url: imageUrl1,
+      alt: title,
+    });
+  }
+
+  if (imageUrl2) {
+    media.push({
+      url: imageUrl2,
+      alt: title,
+    });
+  }
+
+  if (media.length) {
+    payload.media = media;
   }
 
   const token = getToken();
@@ -130,7 +137,6 @@ async function handleCreateListing(event) {
     const newListing = json.data;
     showAlert("success", "Listing created successfully! Redirecting...");
 
-    // Redirect to the new listing page
     if (newListing && newListing.id) {
       setTimeout(() => {
         window.location.href = `/auction/single-listing-page.html?id=${newListing.id}`;

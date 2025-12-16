@@ -2,15 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>BidHub | Login</title>
+    <title>BidHub | Log in</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <meta
       name="description"
-      content="Log in to your BidHub account to create listings, place bids and manage your credits."
+      content="Log in to BidHub to create listings, place bids and manage your auction profile."
     />
-    <meta name="author" content="Your Name" />
-
+    <meta name="author" content="Shamia" />
     <link rel="stylesheet" href="/css/styles.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -19,64 +17,70 @@
   </head>
   <body>
     <header id="site-header"></header>
-
     <main class="bh-page">
       <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-6 col-lg-5">
-            <article class="bh-card p-4 p-lg-5 mt-4">
-              <h1 class="h4 mb-2">Welcome back!</h1>
-
-              <!-- Error alert -->
-              <div
-                id="loginAlert"
-                class="alert alert-danger d-none"
-                role="alert"
-              ></div>
+        <div id="loginAlert" class="alert d-none" role="alert"></div>
+        <section class="row justify-content-center">
+          <div class="col-md-6">
+            <article class="bh-card p-3 p-lg-4">
+              <header class="mb-3 text-center">
+                <h1 class="h4 mb-1">Log in</h1>
+                <p class="text-muted small mb-0">
+                  Use your Noroff student email to access BidHub.
+                </p>
+              </header>
 
               <form id="loginForm" novalidate>
                 <div class="mb-3">
-                  <label for="loginEmail" class="form-label bh-form-label">
+                  <label for="email" class="form-label bh-form-label">
                     Email
                   </label>
                   <input
                     type="email"
-                    class="form-control"
-                    id="loginEmail"
+                    id="email"
                     name="email"
-                    placeholder="you@stud.noroff.no"
+                    class="form-control"
+                    placeholder="name@stud.noroff.no"
                     required
                   />
+                  <div class="form-text small">
+                    Only @stud.noroff.no accounts can log in.
+                  </div>
                 </div>
 
-                <div class="mb-3">
-                  <label for="loginPassword" class="form-label bh-form-label">
+                <div class="mb-4">
+                  <label for="password" class="form-label bh-form-label">
                     Password
                   </label>
                   <input
                     type="password"
-                    class="form-control"
-                    id="loginPassword"
+                    id="password"
                     name="password"
+                    class="form-control"
                     placeholder="Enter your password"
                     required
                   />
                 </div>
 
-                <button type="submit" class="bh-btn-primary w-100 mb-2">
-                  Log in
-                </button>
-
-                <p class="small text-muted mb-0">
-                  Don’t have an account?
-                  <a href="/auth/register.html" class="bh-link-muted">
-                    Register here
-                  </a>
-                </p>
+                <div class="d-flex flex-column gap-2">
+                  <button
+                    type="submit"
+                    id="loginSubmit"
+                    class="bh-btn-primary w-100"
+                  >
+                    Log in
+                  </button>
+                  <p class="small text-center mb-0">
+                    Don’t have an account?
+                    <a href="/auth/register.html" class="bh-link-muted">
+                      Register here
+                    </a>
+                  </p>
+                </div>
               </form>
             </article>
           </div>
-        </div>
+        </section>
       </div>
     </main>
 

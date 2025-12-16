@@ -1,6 +1,5 @@
-// js/profile/profile.js
 import { AUCTION_URL, API_KEY } from "../api/config.js";
-import { getUser, getToken, updateUser} from "../utils/storage.js";
+import { getUser, getToken, updateUser } from "../utils/storage.js";
 import { renderHeader } from "../components/header.js";
 import { formatTimeRemaining } from "../utils/format.js";
 
@@ -33,13 +32,32 @@ function getBannerUrlFromProfile(profile) {
   return null;
 }
 
+function getThumbnailFromListing(listing) {
+  const media = Array.isArray(listing?.media) ? listing.media : [];
+  const img = media[0] || null;
+  if (!img || !img.url) return null;
+  return img;
+}
+
+function getRecentListing(listings) {
+  if (!Array.isArray(listings) || !listings.length) return null;
+  return listings
+    .slice()
+    .sort((a, b) => new Date(b.created) - new Date(a.created))[0];
+}
+
+function getLatestBid(bids) {
+  if (!Array.isArray(bids) || !bids.length) return null;
+  return bids
+    .slice()
+    .sort((a, b) => new Date(b.created) - new Date(a.created))[0];
+}
+
 async function fetchProfile(name) {
   const token = getToken();
 
   const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(
-      name
-    )}?_listings=true&_bids=true`,
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}?_listings=true`,
     {
       headers: {
         "X-Noroff-API-Key": API_KEY,
@@ -59,7 +77,31 @@ async function fetchProfile(name) {
   return json.data;
 }
 
-/* ---------- RENDER HEADER CARD ---------- */
+async function fetchProfileBids(name) {
+  const token = getToken();
+
+  const res = await fetch(
+    `${AUCTION_URL}/profiles/${encodeURIComponent(
+      name
+    )}/bids?_listings=true`,
+    {
+      headers: {
+        "X-Noroff-API-Key": API_KEY,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    }
+  );
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      json?.errors?.[0]?.message || "Could not load your bids."
+    );
+  }
+
+  return Array.isArray(json.data) ? json.data : [];
+}
 
 function renderProfileHeader(profile) {
   const container = document.querySelector("#profile-header");
@@ -75,13 +117,14 @@ function renderProfileHeader(profile) {
     ? `style="background-image:url('${bannerUrl}');"`
     : "";
 
-  container.innerHTML = `
+    container.innerHTML = `
     <article class="bh-card p-0 bh-profile-header-card">
       <div class="bh-profile-banner" ${bannerStyle}></div>
       <div class="bh-profile-header-body">
-        <div class="row align-items-center gy-3">
-          <div class="col-md-8 d-flex align-items-center">
-            <div class="bh-profile-avatar-wrap me-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <!-- Left: avatar + text -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="bh-profile-avatar-wrap">
               <div class="bh-avatar-lg">
                 ${
                   avatarUrl
@@ -96,22 +139,21 @@ function renderProfileHeader(profile) {
                 ${profile.email || ""}
               </p>
               <p class="small mb-0">
-                <strong>Credits: ${credits}</strong>
+                <strong>${credits}</strong> credits available
               </p>
             </div>
           </div>
-          <div class="col-md-4 text-md-end">
-            <a href="/profile/edit-profile.html" class="bh-btn-primary">
-              Edit profile
-            </a>
-          </div>
+
+          <!-- Right: Edit profile button -->
+          <a href="/profile/edit-profile.html" class="bh-btn-outline btn-sm">
+            Edit profile
+          </a>
         </div>
       </div>
     </article>
   `;
-}
 
-/* ---------- RENDER BIO CARD ---------- */
+  }
 
 function renderProfileBio(profile) {
   const container = document.querySelector("#profile-bio");
@@ -121,7 +163,7 @@ function renderProfileBio(profile) {
 
   container.innerHTML = `
     <article class="bh-card p-3 p-lg-4">
-      <h2 class="h6 mb-2">Bio</h2>
+      <h2 class="h6 mb-2">About</h2>
       <p class="text-muted small mb-0">
         ${bioText}
       </p>
@@ -129,141 +171,206 @@ function renderProfileBio(profile) {
   `;
 }
 
-/* ---------- RENDER RECENT LISTING + BIDS (with Create listing button) ---------- */
+function renderProfileSummary(profile, bids) {
+  const container = document.querySelector("#profile-summary");
+  if (!container) return;
 
-function renderProfileActivity(profile) {
+  const listings = Array.isArray(profile.listings) ? profile.listings : [];
+  const totalListings = listings.length;
+  const totalBids = Array.isArray(bids) ? bids.length : 0;
+  const credits =
+    typeof profile.credits === "number" ? profile.credits : 0;
+
+  container.innerHTML = `
+    <article class="bh-card p-3 p-lg-4">
+      <h2 class="h6 mb-2">Summary</h2>
+
+      <div class="mb-2 small">
+        <div class="d-flex justify-content-between">
+          <span>Credits</span>
+          <strong>${credits}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Total listings</span>
+          <strong>${totalListings}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Total bids</span>
+          <strong>${totalBids}</strong>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mt-2">
+       <a href="/auction/create-listing.html" class="bh-btn-primary">
+            Create listing
+          </a>
+        <a href="/profile/my-listings.html" class="bh-btn-outline btn-sm">
+          My listings
+        </a>
+        <a href="/profile/my-bids.html" class="bh-btn-outline btn-sm">
+          My bids
+        </a>
+      </div>
+    </article>
+  `;
+}
+
+function renderProfileActivity(profile, bids) {
   const container = document.querySelector("#profile-activity");
   if (!container) return;
 
   const listings = Array.isArray(profile.listings) ? profile.listings : [];
-  const bids = Array.isArray(profile.bids) ? profile.bids : [];
-
-  const recentListing = listings
-    .slice()
-    .sort((a, b) => new Date(b.created) - new Date(a.created))[0];
-
-  const recentBid = bids
-    .slice()
-    .sort((a, b) => new Date(b.created) - new Date(a.created))[0];
+  const recentListing = getRecentListing(listings);
+  const recentBid = getLatestBid(bids);
 
   const getBidListingTitle = (bid) => {
     if (!bid) return "";
     if (bid.listing && bid.listing.title) return bid.listing.title;
     if (bid.listingTitle) return bid.listingTitle;
-    return "a listing";
+    return "Listing";
+  };
+
+  const getBidListingThumb = (bid) => {
+    if (!bid || !bid.listing) return null;
+    return getThumbnailFromListing(bid.listing);
   };
 
   container.innerHTML = `
-    <div class="row gy-3">
+    <div class="d-flex flex-column gap-3">
       <!-- Recent listing -->
-      <div class="col-12">
-        <article class="bh-card p-3 p-lg-4">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-              <h2 class="h6 mb-0">Recent listing</h2>
-              <p class="text-muted small mb-0">
-                A quick view of your latest listings.
-              </p>
-            </div>
-            <div class="d-flex flex-column align-items-end gap-1">
-              <a href="/profile/my-listings.html" class="bh-link-muted small">
-                View all listings →
-              </a>
-              <a href="/auction/create-listing.html" class="bh-btn-primary btn-sm">
-                Create listing
-              </a>
-            </div>
-          </div>
-
-          ${
-            recentListing
-              ? `
-            <div class="bh-profile-item-row">
-              <div class="bh-profile-thumb">
-                <span class="small">Image</span>
-              </div>
-              <div>
-                <p class="mb-1 small">
-                  <a
-                    href="/auction/single-listing-page.html?id=${recentListing.id}"
-                    class="bh-link-muted"
-                  >
-                    <strong>${recentListing.title}</strong>
-                  </a>
-                </p>
-                <p class="text-muted small mb-0">
-                  ${
-                    recentListing.endsAt
-                      ? formatTimeRemaining(recentListing.endsAt)
-                      : "No end time"
-                  }
-                </p>
-              </div>
-            </div>
-          `
-              : `
-            <p class="text-muted small mb-0 mt-2">
-              You haven't created any listings yet.
+      <article class="bh-card p-3 p-lg-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            <h2 class="h6 mb-0">Recent listing</h2>
+            <p class="text-muted small mb-0">
+              Your latest item on BidHub.
             </p>
-          `
-          }
-        </article>
-      </div>
-
-      <!-- Recent bids -->
-      <div class="col-12">
-        <article class="bh-card p-3 p-lg-4">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-              <h2 class="h6 mb-0">Recent bids</h2>
-              <p class="text-muted small mb-0">
-                Auctions you've recently bid on.
-              </p>
-            </div>
-            <a href="/profile/my-bids.html" class="bh-link-muted small">
-              View all bids →
-            </a>
           </div>
+          <a href="/profile/my-listings.html" class="bh-link-muted small">
+            View all →
+          </a>
+        </div>
 
-          ${
-            recentBid
-              ? `
-            <div class="bh-profile-item-row">
-              <div class="bh-profile-thumb">
-                <span class="small">Image</span>
-              </div>
-              <div>
-                <p class="mb-1 small">
-                  <strong>${getBidListingTitle(recentBid)}</strong>
-                </p>
-                <p class="text-muted small mb-0">
-                  Your bid: ${recentBid.amount} credits
-                </p>
-              </div>
-            </div>
-          `
-              : `
-            <p class="text-muted small mb-0 mt-2">
-              You haven't placed any bids yet.
+        ${
+          recentListing
+            ? (() => {
+                const thumb = getThumbnailFromListing(recentListing);
+                const endsText = recentListing.endsAt
+                  ? formatTimeRemaining(recentListing.endsAt)
+                  : "No end time";
+
+                return `
+                  <div class="bh-profile-item-row mt-2">
+                    <div class="bh-profile-thumb">
+                      ${
+                        thumb
+                          ? `<img src="${thumb.url}" alt="${thumb.alt || recentListing.title || "Listing image"}" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
+                          : `<span class="small">Image</span>`
+                      }
+                    </div>
+                    <div>
+                      <p class="mb-1 small">
+                        <a
+                          href="/auction/listing.html?id=${recentListing.id}"
+                          class="bh-link-muted"
+                        >
+                          <strong>${recentListing.title}</strong>
+                        </a>
+                      </p>
+                      <p class="text-muted small mb-0">
+                        ${endsText}
+                      </p>
+                    </div>
+                  </div>
+                `;
+              })()
+            : `
+              <p class="text-muted small mb-0 mt-2">
+                You haven't created any listings yet.
+              </p>
+            `
+        }
+      </article>
+
+      <article class="bh-card p-3 p-lg-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            <h2 class="h6 mb-0">Recent bid</h2>
+            <p class="text-muted small mb-0">
+              The last auction you bid on.
             </p>
-          `
-          }
-        </article>
-      </div>
+          </div>
+          <a href="/profile/my-bids.html" class="bh-link-muted small">
+            View all →
+          </a>
+        </div>
+
+        ${
+          recentBid
+            ? (() => {
+                const thumb = getBidListingThumb(recentBid);
+                const listingTitle = getBidListingTitle(recentBid);
+                const listingId =
+                  recentBid.listing?.id || recentBid.listingId;
+                const endsAt =
+                  recentBid.listing?.endsAt || null;
+                const timeText = endsAt
+                  ? formatTimeRemaining(endsAt)
+                  : "No end time";
+
+                return `
+                  <div class="bh-profile-item-row mt-2">
+                    <div class="bh-profile-thumb">
+                      ${
+                        thumb
+                          ? `<img src="${thumb.url}" alt="${thumb.alt || listingTitle || "Listing image"}" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
+                          : `<span class="small">Image</span>`
+                      }
+                    </div>
+                    <div>
+                      <p class="mb-1 small">
+                        ${
+                          listingId
+                            ? `<a href="/auction/listing.html?id=${listingId}" class="bh-link-muted">
+                                 <strong>${listingTitle}</strong>
+                               </a>`
+                            : `<strong>${listingTitle}</strong>`
+                        }
+                      </p>
+                      <p class="text-muted small mb-0">
+                        Your bid: ${recentBid.amount} credits
+                        ${
+                          endsAt
+                            ? ` · <span class="bh-countdown" data-ends-at="${endsAt}">
+                                  ${timeText}
+                                </span>`
+                            : ""
+                        }
+                      </p>
+                    </div>
+                  </div>
+                `;
+              })()
+            : `
+              <p class="text-muted small mb-0 mt-2">
+                You haven't placed any bids yet.
+              </p>
+            `
+        }
+      </article>
     </div>
   `;
 }
-
-/* ---------- LOAD PROFILE ---------- */
 
 async function loadProfile() {
   const user = requireAuth();
   if (!user) return;
 
   try {
-    const profile = await fetchProfile(user.name);
-
-    // 1) sync localStorage with the fresh profile data
+    const [profile, bids] = await Promise.all([
+      fetchProfile(user.name),
+      fetchProfileBids(user.name),
+    ]);
     updateUser({
       name: profile.name,
       email: profile.email,
@@ -273,13 +380,12 @@ async function loadProfile() {
       bio: profile.bio,
     });
 
-    // 2) re-render header so credits update immediately
     renderHeader();
 
-    // 3) render the profile cards
     renderProfileHeader(profile);
     renderProfileBio(profile);
-    renderProfileActivity(profile);
+    renderProfileSummary(profile, bids);
+    renderProfileActivity(profile, bids);
   } catch (error) {
     console.error(error);
 
@@ -291,13 +397,8 @@ async function loadProfile() {
         </div>
       `;
     }
-    const bioSection = document.querySelector("#profile-bio");
-    if (bioSection) bioSection.innerHTML = "";
-    const activitySection = document.querySelector("#profile-activity");
-    if (activitySection) activitySection.innerHTML = "";
   }
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
   loadProfile();

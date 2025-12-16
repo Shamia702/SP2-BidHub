@@ -1,0 +1,117 @@
+@use "variables" as v;
+
+// ----------------------------
+// Profile header (banner + avatar)
+// ----------------------------
+
+.bh-profile-header-card {
+  overflow: hidden;
+  border-radius: v.$bh-radius-card;
+}
+
+.bh-profile-banner {
+  height: 160px;
+  background-color: v.$bh-color-primary; // fallback if no image
+  background-size: cover;
+  background-position: center;
+}
+// Reduce space between bio/overview row and recent activity section
+#profile-activity {
+  margin-top: 0.5rem; // was effectively bigger because of Bootstrap spacing
+}
+
+
+.bh-profile-header-body {
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+// wrapper so avatar overlaps banner a bit
+.bh-profile-avatar-wrap {
+  margin-top: -2.5rem;
+}
+
+.bh-avatar-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: v.$bh-color-surface;
+  border: 3px solid v.$bh-color-surface;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: v.$bh-color-text-main;
+  overflow: hidden;
+}
+
+.bh-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// bigger avatar on desktop
+@media (min-width: 768px) {
+  .bh-avatar-lg {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+// ----------------------------
+// Bio / cards common spacing
+// ----------------------------
+
+#profile-bio .bh-card,
+#profile-overview .bh-card,
+#profile-activity .bh-card {
+  border-radius: v.$bh-radius-card;
+}
+
+// ----------------------------
+// Overview card tweaks
+// ----------------------------
+
+#profile-overview .bh-card {
+  min-height: 100%;
+}
+
+#profile-overview .bh-btn-outline {
+  font-size: 0.85rem;
+}
+
+// ----------------------------
+// Activity rows (recent listing / bid)
+// ----------------------------
+
+.bh-profile-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bh-profile-thumb {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: v.$bh-radius-card;
+  overflow: hidden;
+  background-color: v.$bh-color-border;
+}
+
+.bh-profile-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// slightly larger thumbnails on md+
+@media (min-width: 768px) {
+  .bh-profile-thumb {
+    flex-basis: 72px;
+    width: 72px;
+    height: 72px;
+  }
+}

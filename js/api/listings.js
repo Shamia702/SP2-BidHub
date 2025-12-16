@@ -1,6 +1,4 @@
-// js/api/listings.js
 import { AUCTION_URL } from "./config.js";
-
 export async function getListingById(id) {
   const url = new URL(`${AUCTION_URL}/listings/${id}`);
   url.searchParams.set("_bids", "true");
@@ -16,8 +14,6 @@ export async function getListingById(id) {
 
   return json.data;
 }
-
-// Generic active listings fetch – RETURNS data + meta (for pagination)
 export async function getActiveListings({ limit = 24, page = 1 } = {}) {
   const url = new URL(`${AUCTION_URL}/listings`);
   url.searchParams.set("_active", "true");
@@ -38,8 +34,6 @@ export async function getActiveListings({ limit = 24, page = 1 } = {}) {
     meta: json.meta || {},
   };
 }
-
-// Landing page helper: just returns the array of listings
 export async function getFeaturedListings(limit = 4) {
   const { data } = await getActiveListings({ limit, page: 1 });
   return data;

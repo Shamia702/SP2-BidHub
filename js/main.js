@@ -1,4 +1,3 @@
-// js/main.js
 import { renderHeader } from "./components/header.js";
 import { renderFooter } from "./components/footer.js";
 import { getUser } from "./utils/storage.js";
@@ -15,15 +14,12 @@ function updateCountdowns() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1) Render header + footer
   renderHeader();
   renderFooter();
 
-  // 2) (Optional) check current user
   const user = getUser();
   console.log("Current user object:", user);
-
-  // 3) Update countdowns now and every minute
+  
   updateCountdowns();
   setInterval(updateCountdowns, 60_000);
 });

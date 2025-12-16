@@ -1,12 +1,25 @@
-// js/components/footer.js
+import { getUser } from "../utils/storage.js";
 
 export function renderFooter() {
   const footer = document.querySelector("#site-footer");
   if (!footer) return;
 
+  const user = getUser();
+  const isLoggedIn = !!user;
+  const accountLinks = isLoggedIn
+    ? `
+      <li><a class="bh-footer-link" href="/profile/profile.html">Profile</a></li>
+      <li><a class="bh-footer-link" href="/profile/my-listings.html">My listings</a></li>
+      <li><a class="bh-footer-link" href="/profile/my-bids.html">My bids</a></li>
+    `
+    : `
+      <li><a class="bh-footer-link" href="/auth/login.html">Log in</a></li>
+      <li><a class="bh-footer-link" href="/auth/register.html">Register</a></li>
+    `;
+
   footer.innerHTML = `
-    <div class="container">
-      <div class="row gy-4 pb-3">
+    <div class="container py-4">
+      <div class="row gy-4 pb-2">
         <!-- Brand -->
         <div class="col-md-3">
           <h2 class="h5 mb-2 bh-footer-title">BidHub</h2>
@@ -21,8 +34,6 @@ export function renderFooter() {
           <h3 class="small text-uppercase mb-2 bh-footer-title">Explore</h3>
           <ul class="list-unstyled small mb-0">
             <li><a class="bh-footer-link" href="/auction/auctions.html">Auctions</a></li>
-            <li><a class="bh-footer-link" href="/profile/my-listings.html">My listings</a></li>
-            <li><a class="bh-footer-link" href="/profile/my-bids.html">My bids</a></li>
           </ul>
         </div>
 
@@ -30,8 +41,7 @@ export function renderFooter() {
         <div class="col-md-3">
           <h3 class="small text-uppercase mb-2 bh-footer-title">Account</h3>
           <ul class="list-unstyled small mb-0">
-            <li><a class="bh-footer-link" href="/auth/login.html">Log in</a></li>
-            <li><a class="bh-footer-link" href="/auth/register.html">Register</a></li>
+            ${accountLinks}
           </ul>
         </div>
 

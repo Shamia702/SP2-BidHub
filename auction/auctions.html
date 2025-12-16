@@ -4,13 +4,11 @@
     <meta charset="UTF-8" />
     <title>BidHub | Auctions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <meta
       name="description"
       content="Browse all active auctions on BidHub. Search, sort and view student listings, and log in to place bids."
     />
-    <meta name="author" content="Your Name" />
-
+    <meta name="author" content="Shamia" />
     <link rel="stylesheet" href="/css/styles.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -18,13 +16,9 @@
     ></script>
   </head>
   <body>
-    <!-- Header injected by JS -->
     <header id="site-header"></header>
-
-    <!-- MAIN -->
     <main class="bh-page">
       <div class="container">
-        <!-- Page heading + Create listing button (only when logged in) -->
         <header
           class="mb-3 d-flex flex-wrap justify-content-between align-items-center gap-2"
         >
@@ -35,8 +29,6 @@
               account, but you need to log in to place a bid.
             </p>
           </div>
-
-          <!-- JS will remove d-none when user is logged in -->
           <a
             href="/auction/create-listing.html"
             class="bh-btn-primary d-none"
@@ -46,10 +38,8 @@
           </a>
         </header>
 
-        <!-- Search + Sort -->
        <section class="mb-4">
   <form id="auctionSearchForm" class="bh-search-form">
-    <!-- main search input + suggestions -->
     <div class="bh-search-main">
       <label class="bh-form-label d-none" for="auctionSearch">
         Search
@@ -61,11 +51,9 @@
         placeholder="Search auctions by title or description"
         autocomplete="off"
       />
-      <!-- suggestions will be filled by JS -->
       <div id="auctionSearchSuggestions" class="bh-search-suggestions"></div>
     </div>
 
-    <!-- actions -->
     <div class="bh-search-actions">
       <button type="submit" class="bh-btn-primary btn-sm">
         Search
@@ -79,7 +67,6 @@
       </button>
     </div>
 
-    <!-- sort dropdown -->
     <div class="bh-search-sort">
       <label class="bh-form-label d-none" for="sortSelect">
         Sort by
@@ -96,24 +83,17 @@
   </form>
 </section>
 
-        <!-- RESULTS GRID -->
         <section>
           <div id="auctions-grid" class="row gy-4">
-            <!-- JS: skeletons first, then real cards -->
           </div>
 
-          <!-- PAGINATION -->
           <nav id="auctions-pagination" class="bh-pagination mt-3">
-            <!-- JS injects Previous / Next buttons -->
           </nav>
         </section>
       </div>
     </main>
 
-    <!-- Footer injected by JS -->
     <footer id="site-footer" class="bh-footer"></footer>
-
-    <!-- JS -->
     <script type="module" src="/js/main.js"></script>
     <script type="module" src="/js/auction/auctions.js"></script>
   </body>

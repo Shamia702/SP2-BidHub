@@ -1,5 +1,25 @@
 @use "variables" as v;
 
+// Sticky layout: header at top, footer at bottom, main stretches
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+// Your main content wrapper
+main.bh-page {
+  flex: 1 0 auto;
+}
+
+.bh-footer {
+  margin-top: auto;
+}
+
 body {
   background-color: v.$bh-color-page-bg;
   color: v.$bh-color-text-main;

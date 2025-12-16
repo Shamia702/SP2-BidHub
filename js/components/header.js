@@ -1,4 +1,3 @@
-// js/components/header.js
 import { getUser, clearAuth } from "../utils/storage.js";
 
 export function renderHeader() {
@@ -6,13 +5,10 @@ export function renderHeader() {
   if (!header) return;
 
   const user = getUser();
-
-  // LOGGED OUT NAVBAR
   if (!user) {
     header.innerHTML = `
       <nav class="navbar navbar-expand-lg bh-navbar fixed-top">
         <div class="container">
-          <!-- Brand / logo -->
           <a
             href="/index.html"
             class="navbar-brand d-flex align-items-center bh-navbar-logo"
@@ -25,7 +21,6 @@ export function renderHeader() {
             <span class="visually-hidden">BidHub</span>
           </a>
 
-          <!-- Hamburger toggle -->
           <button
             class="navbar-toggler"
             type="button"
@@ -38,7 +33,6 @@ export function renderHeader() {
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <!-- Collapsible content -->
           <div class="collapse navbar-collapse" id="mainNavbar">
             <!-- Center nav links -->
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
@@ -52,7 +46,6 @@ export function renderHeader() {
               </li>
             </ul>
 
-            <!-- Right side buttons -->
             <div class="d-flex align-items-center gap-2">
               <a href="/auth/login.html" class="bh-btn-outline">Login</a>
               <a href="/auth/register.html" class="bh-btn-primary">Register</a>
@@ -64,12 +57,9 @@ export function renderHeader() {
     return;
   }
 
-  // LOGGED IN NAVBAR
  const credits = user.credits ?? 0;
 const name = user.name ?? "User";
 
-// Noroff API sometimes stores avatar as string or object.
-// Try both:
 const avatarUrl =
   (user.avatar && typeof user.avatar === "string" && user.avatar) ||
   (user.avatar && typeof user.avatar === "object" && user.avatar.url) ||
@@ -81,7 +71,6 @@ const initials = name?.[0]?.toUpperCase() || "U";
   header.innerHTML = `
     <nav class="navbar navbar-expand-lg bh-navbar fixed-top">
       <div class="container">
-        <!-- Brand / logo -->
         <a
           href="/auction/auctions.html"
           class="navbar-brand d-flex align-items-center bh-navbar-logo"
@@ -94,7 +83,6 @@ const initials = name?.[0]?.toUpperCase() || "U";
           <span class="visually-hidden">BidHub</span>
         </a>
 
-        <!-- Hamburger toggle -->
         <button
           class="navbar-toggler"
           type="button"
@@ -106,8 +94,6 @@ const initials = name?.[0]?.toUpperCase() || "U";
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-
-        <!-- Collapsible content -->
         <div class="collapse navbar-collapse" id="mainNavbar">
           <!-- Center nav links -->
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
@@ -166,8 +152,6 @@ const initials = name?.[0]?.toUpperCase() || "U";
       </div>
     </nav>
   `;
-
-  // Wire up logout button
   const logoutBtn = header.querySelector("#bh-logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (event) => {

@@ -1,5 +1,3 @@
-// js/utils/format.js
-
 export function getHighestBidAmount(listing) {
   const bids = listing.bids || [];
   if (!bids.length) return 0;

@@ -1,8 +1,6 @@
 import { getFeaturedListings } from "../api/listings.js";
 import { getHighestBidAmount, formatTimeRemaining } from "../utils/format.js";
 
-
-// 1) Skeletons while loading
 function renderHeroSkeleton() {
   const heroCard = document.querySelector("#hero-featured-card");
   if (!heroCard) return;
@@ -35,7 +33,6 @@ function renderFeaturedSkeleton(count = 3) {
   grid.innerHTML = html;
 }
 
-// 2) Real hero card
 function renderHeroListing(listing) {
   const heroCard = document.querySelector("#hero-featured-card");
   if (!heroCard) return;
@@ -70,8 +67,6 @@ function renderHeroListing(listing) {
   `;
 }
 
-
-// 3) Real featured cards
 function createFeaturedCard(listing) {
   const { id, title, media, _count, endsAt } = listing;
 
@@ -108,13 +103,9 @@ function createFeaturedCard(listing) {
   `;
 }
 
-
-// 4) Main function
 async function renderLanding() {
   const grid = document.querySelector("#featured-auctions-grid");
   if (!grid) return;
-
-  // show skeletons while loading
   renderHeroSkeleton();
   renderFeaturedSkeleton(3);
 
@@ -127,11 +118,7 @@ async function renderLanding() {
     }
 
     const [heroListing, ...featured] = listings;
-
-    // hero
     renderHeroListing(heroListing);
-
-    // featured cards
     const cardsHtml = featured.map(createFeaturedCard).join("");
     grid.innerHTML = cardsHtml;
   } catch (error) {

@@ -1,5 +1,3 @@
-// js/auction/auctions.js
-
 import { AUCTION_URL, API_KEY } from "../api/config.js";
 import { getUser } from "../utils/storage.js";
 import { formatTimeRemaining } from "../utils/format.js";
@@ -20,8 +18,6 @@ const clearBtn = document.querySelector("#clearSearch");
 const sortSelect = document.querySelector("#sortSelect");
 const createListingBtn = document.querySelector("#createListingBtn");
 const suggestionsEl = document.querySelector("#auctionSearchSuggestions");
-
-/* ---------------------- helpers ---------------------- */
 
 function showSkeletons(count = PAGE_SIZE) {
   if (!gridEl) return;
@@ -166,8 +162,6 @@ function renderPagination(totalPages) {
     });
 }
 
-/* ---------------------- filtering & sorting ---------------------- */
-
 function applyFilters() {
   let list = [...allListings];
 
@@ -201,8 +195,6 @@ function applyFilters() {
   filteredListings = list;
 }
 
-/* ---------------------- suggestions with images ---------------------- */
-
 function clearSuggestions() {
   if (!suggestionsEl) return;
   suggestionsEl.innerHTML = "";
@@ -213,8 +205,6 @@ function updateSuggestions(term) {
   if (!suggestionsEl) return;
 
   const q = term.trim().toLowerCase();
-
-  // show suggestions only if there is at least 1 char
   if (!q) {
     clearSuggestions();
     return;
@@ -226,7 +216,7 @@ function updateSuggestions(term) {
       const desc = item.description?.toLowerCase() || "";
       return title.includes(q) || desc.includes(q);
     })
-    .slice(0, 6); // up to 6 suggestions
+    .slice(0, 6); 
 
   if (!matches.length) {
     clearSuggestions();
@@ -272,8 +262,6 @@ function updateSuggestions(term) {
 
   suggestionsEl.innerHTML = markup;
   suggestionsEl.style.display = "block";
-
-  // click = go straight to listing page
   suggestionsEl
     .querySelectorAll(".bh-search-suggestion-card")
     .forEach((el) => {
@@ -285,8 +273,6 @@ function updateSuggestions(term) {
       });
     });
 }
-
-/* ---------------------- API fetch ---------------------- */
 
 async function fetchAllListings() {
   const url = `${AUCTION_URL}/listings?_active=true&_bids=true&limit=100`;
@@ -307,8 +293,6 @@ async function fetchAllListings() {
 
   return json.data || [];
 }
-
-/* ---------------------- init ---------------------- */
 
 async function initAuctionsPage() {
   const user = getUser();
@@ -336,7 +320,6 @@ async function initAuctionsPage() {
     if (paginationEl) paginationEl.innerHTML = "";
   }
 
-  // normal search submit
   if (searchForm) {
     searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -348,14 +331,12 @@ async function initAuctionsPage() {
     });
   }
 
-  // live suggestions from 1 letter, with images
   if (searchInput) {
     searchInput.addEventListener("input", () => {
       const term = searchInput.value;
       updateSuggestions(term);
     });
 
-    // hide suggestions on blur (little delay to allow click)
     searchInput.addEventListener("blur", () => {
       setTimeout(() => {
         clearSuggestions();
@@ -363,7 +344,6 @@ async function initAuctionsPage() {
     });
   }
 
-  // clear search
   if (clearBtn) {
     clearBtn.addEventListener("click", () => {
       if (searchInput) searchInput.value = "";
@@ -375,7 +355,6 @@ async function initAuctionsPage() {
     });
   }
 
-  // sort change
   if (sortSelect) {
     sortSelect.addEventListener("change", () => {
       currentSort = sortSelect.value;
@@ -384,8 +363,7 @@ async function initAuctionsPage() {
       renderListingsPage(1);
     });
   }
-
-  // click outside to close suggestions
+  
   document.addEventListener("click", (event) => {
     if (
       !suggestionsEl ||

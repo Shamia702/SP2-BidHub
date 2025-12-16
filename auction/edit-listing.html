@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>BidHub | Create listing</title>
+    <title>BidHub | Edit listing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Create a new auction listing on BidHub. Add a title, description, end time and up to two images."
+      content="Edit an existing auction listing on BidHub."
     />
     <meta name="author" content="Shamia" />
     <link rel="stylesheet" href="/css/styles.css" />
@@ -20,25 +20,28 @@
 
     <main class="bh-page">
       <div class="container">
-        <header class="mb-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <header
+          class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"
+        >
           <div>
-            <h1 class="mb-1">Create listing</h1>
+            <h1 class="mb-1">Edit listing</h1>
             <p class="text-muted mb-0 small">
-              Add a new item to auction. Students can view it immediately and start bidding when the timer goes live.
+              Update the details of your existing auction.
             </p>
           </div>
-          <a href="/auction/auctions.html" class="bh-link-muted small">
-            ← Back to auctions
+          <a href="/profile/my-listings.html" class="bh-link-muted small">
+            ← Back to My listings
           </a>
         </header>
         <div
-          id="createListingAlert"
+          id="editListingAlert"
           class="alert d-none"
           role="alert"
         ></div>
         <section>
           <article class="bh-card p-3 p-lg-4">
-            <form id="createListingForm" novalidate>
+            <form id="editListingForm" novalidate>
+              <!-- Title -->
               <div class="mb-3">
                 <label for="title" class="form-label bh-form-label">
                   Title
@@ -52,7 +55,6 @@
                   required
                 />
               </div>
-
               <div class="mb-3">
                 <label for="description" class="form-label bh-form-label">
                   Description
@@ -78,7 +80,7 @@
                   placeholder="https://example.com/image-1.jpg"
                 />
                 <div class="form-text small">
-                  Paste a direct URL to the main image (JPG, PNG, etc.).
+                  Main image for the listing.
                 </div>
               </div>
 
@@ -107,21 +109,31 @@
                   required
                 />
                 <div class="form-text small">
-                  Choose when the auction should end. Must be in the future.
+                  Update when the auction should end. Must be in the future.
                 </div>
               </div>
 
-              <div class="d-flex justify-content-end gap-2">
-                <a href="/auction/auctions.html" class="bh-btn-outline">
-                  Cancel
-                </a>
+              <div class="d-flex justify-content-between align-items-center gap-2">
                 <button
-                  type="submit"
-                  id="createListingSubmit"
-                  class="bh-btn-primary"
+                  type="button"
+                  id="deleteListingBtn"
+                  class="btn btn-link text-danger p-0 small text-decoration-none"
                 >
-                  Create listing
+                  Delete listing
                 </button>
+
+                <div class="d-flex gap-2">
+                  <a href="/profile/my-listings.html" class="bh-btn-outline">
+                    Cancel
+                  </a>
+                  <button
+                    type="submit"
+                    id="editListingSubmit"
+                    class="bh-btn-primary"
+                  >
+                    Save changes
+                  </button>
+                </div>
               </div>
             </form>
           </article>
@@ -130,7 +142,8 @@
     </main>
 
     <footer id="site-footer" class="bh-footer"></footer>
+
     <script type="module" src="/js/main.js"></script>
-    <script type="module" src="/js/auction/create-listing.js"></script>
+    <script type="module" src="/js/auction/edit-listing.js"></script>
   </body>
 </html>

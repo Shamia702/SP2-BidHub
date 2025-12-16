@@ -1,7 +1,7 @@
-// js/auction/listing.js
 import { AUCTION_URL, API_KEY } from "../api/config.js";
-import { getUser, getToken } from "../utils/storage.js";
+import { getUser, getToken, updateUser } from "../utils/storage.js";
 import { formatTimeRemaining } from "../utils/format.js";
+import { renderHeader } from "../components/header.js";
 
 const params = new URLSearchParams(window.location.search);
 const listingId = params.get("id");
@@ -23,7 +23,6 @@ function formatBidDate(isoString) {
   });
 }
 
-// Fetch listing with seller + bids
 async function fetchListing() {
   const url = `${AUCTION_URL}/listings/${listingId}?_seller=true&_bids=true`;
 
@@ -42,6 +41,46 @@ async function fetchListing() {
   }
 
   return json.data;
+}
+
+async function refreshUserProfileAndHeader() {
+  const user = getUser();
+  const token = getToken();
+
+  if (!user || !token) return;
+
+  try {
+    const res = await fetch(
+      `${AUCTION_URL}/profiles/${encodeURIComponent(user.name)}`,
+      {
+        headers: {
+          "X-Noroff-API-Key": API_KEY,
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const json = await res.json();
+    if (!res.ok) {
+      console.warn("Could not refresh profile after action");
+      return;
+    }
+
+    const profile = json.data;
+
+    updateUser({
+      name: profile.name,
+      email: profile.email,
+      avatar: profile.avatar,
+      banner: profile.banner,
+      credits: profile.credits,
+      bio: profile.bio,
+    });
+
+    renderHeader();
+  } catch (error) {
+    console.error("Failed to refresh profile after action", error);
+  }
 }
 
 function renderListing(listing) {
@@ -65,7 +104,6 @@ function renderListing(listing) {
   const timeText = formatTimeRemaining(endsAt);
   const bidsCount = _count?.bids ?? bids.length ?? 0;
 
-  // Get highest bid
   const highestBid = bids.length
     ? bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0)
     : 0;
@@ -73,7 +111,6 @@ function renderListing(listing) {
   const sellerName =
     seller?.name || seller?.username || seller?.email || "Unknown seller";
 
-  // MAIN LAYOUT: gallery + details + bid section placeholder
   container.innerHTML = `
     <div class="row gy-4">
       <!-- Left: gallery -->
@@ -156,7 +193,6 @@ function renderListing(listing) {
     </div>
   `;
 
-  // hook up thumbnail clicks to swap main image
   const thumbButtons = container.querySelectorAll(".bh-listing-thumb-btn");
   if (thumbButtons && mainImage) {
     const mainImgEl = container.querySelector(".bh-listing-main-img");
@@ -182,7 +218,6 @@ function renderBidSection(listing, user, highestBid) {
   const isLoggedIn = !!user;
   const isSeller = isLoggedIn && listing.seller?.name === user.name;
 
-  // Logged out → show "Login to bid"
   if (!isLoggedIn) {
     bidSection.innerHTML = `
       <div class="alert alert-info small mb-0" role="alert">
@@ -196,7 +231,6 @@ function renderBidSection(listing, user, highestBid) {
     return;
   }
 
-  // Seller → cannot bid on own listing
   if (isSeller) {
     bidSection.innerHTML = `
       <div class="alert alert-warning small mb-2" role="alert">
@@ -209,7 +243,6 @@ function renderBidSection(listing, user, highestBid) {
     return;
   }
 
-  // Logged in + not seller → show bid form
   bidSection.innerHTML = `
     <div
       id="bidAlert"
@@ -249,25 +282,6 @@ function renderBidSection(listing, user, highestBid) {
     );
   }
 }
-function getBidderName(bid) {
-  // If API already gives a direct string
-  if (bid.bidderName && typeof bid.bidderName === "string") {
-    return bid.bidderName;
-  }
-
-  // If API sends bidder as a string
-  if (typeof bid.bidder === "string") {
-    return bid.bidder;
-  }
-
-  // If API sends bidder as an object { name: "..." }
-  if (bid.bidder && typeof bid.bidder === "object" && bid.bidder.name) {
-    return bid.bidder.name;
-  }
-
-  return "unknown";
-}
-
 
 function renderBidsList(listing) {
   const container = document.querySelector("#listing-bids");
@@ -302,9 +316,8 @@ function renderBidsList(listing) {
             <div>
               <strong>${bid.amount} credits</strong>
               <span class="text-muted">
-  by @${getBidderName(bid)}
-</span>
-
+                by @${bid.bidderName || bid.bidder || "unknown"}
+              </span>
             </div>
             <span class="text-muted">${formatBidDate(bid.created)}</span>
           </li>
@@ -320,7 +333,7 @@ function showBidAlert(type, message) {
   const alert = document.querySelector("#bidAlert");
   if (!alert) return;
 
-  alert.className = `alert alert-${type} small mb-2`; // reset + set Bootstrap classes
+  alert.className = `alert alert-${type} small mb-2`;
   alert.textContent = message;
 }
 
@@ -372,9 +385,8 @@ async function handleBidSubmit(event, listing, highestBid) {
 
     showBidAlert("success", "Bid placed successfully!");
     amountInput.value = "";
-
-    // Reload listing to update current highest bid + history
     await loadListing();
+    await refreshUserProfileAndHeader();
   } catch (error) {
     console.error(error);
     showBidAlert(
@@ -390,7 +402,6 @@ async function loadListing() {
 
   if (!listingSection || !bidsSection) return;
 
-  // Optional: show skeleton again on reload
   listingSection.classList.add("bh-listing-skeleton");
 
   try {
