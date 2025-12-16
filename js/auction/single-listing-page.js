@@ -23,6 +23,47 @@ function formatBidDate(isoString) {
   });
 }
 
+async function refreshUserCredits() {
+  const user = getUser();
+  const token = getToken();
+  if (!user || !token) return;
+
+  try {
+    const res = await fetch(
+      `${AUCTION_URL}/profiles/${encodeURIComponent(user.name)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Noroff-API-Key": API_KEY,
+        },
+      }
+    );
+
+    const json = await res.json();
+    if (!res.ok) {
+      console.warn("Could not refresh user credits:", json);
+      return;
+    }
+
+    const profile = json.data;
+
+    // Update local storage user
+    updateUser({
+      name: profile.name,
+      email: profile.email,
+      avatar: profile.avatar,
+      banner: profile.banner,
+      credits: profile.credits,
+      bio: profile.bio,
+    });
+
+    // Re-render header so credits change
+    renderHeader();
+  } catch (error) {
+    console.error("Error refreshing user credits", error);
+  }
+}
+
 async function fetchListing() {
   const url = `${AUCTION_URL}/listings/${listingId}?_seller=true&_bids=true`;
 
@@ -403,16 +444,17 @@ async function handleBidSubmit(event, listing, highestBid) {
     const json = await res.json();
 
     if (!res.ok) {
-      const message =
-        json?.errors?.[0]?.message || "Could not place bid. Please try again.";
-      showBidAlert("danger", message);
-      return;
-    }
+  const message =
+    json?.errors?.[0]?.message || "Could not place bid. Please try again.";
+  showBidAlert("danger", message);
+  return;
+}
 
-    showBidAlert("success", "Bid placed successfully!");
-    amountInput.value = "";
-    await loadListing();
-    await refreshUserProfileAndHeader();
+showBidAlert("success", "Bid placed successfully!");
+amountInput.value = "";
+await refreshUserCredits();
+await loadListing();
+
   } catch (error) {
     console.error(error);
     showBidAlert(
