@@ -107,7 +107,7 @@ It’s a student-only auction platform where users can register with their `@stu
 
 ### 1. Clone the repository
 
-````bash
+```bash
 git clone https://github.com/Shamia702/SP2-BidHub.git
 cd SP2-BidHub
 code .
