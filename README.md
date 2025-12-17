@@ -111,13 +111,14 @@ It’s a student-only auction platform where users can register with their `@stu
 git clone https://github.com/Shamia702/SP2-BidHub.git
 cd SP2-BidHub
 code .
+```
 
 
 ### 2. Install dependencies
 
 ```bash
 npm install
-
+```
 ### 3. Run Sass in development mode
 
 ```bash
