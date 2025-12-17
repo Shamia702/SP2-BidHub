@@ -29,7 +29,6 @@ export function renderFooter() {
           </p>
         </div>
 
-        <!-- Explore -->
         <div class="col-md-3">
           <h3 class="small text-uppercase mb-2 bh-footer-title">Explore</h3>
           <ul class="list-unstyled small mb-0">
@@ -37,7 +36,6 @@ export function renderFooter() {
           </ul>
         </div>
 
-        <!-- Account -->
         <div class="col-md-3">
           <h3 class="small text-uppercase mb-2 bh-footer-title">Account</h3>
           <ul class="list-unstyled small mb-0">
@@ -45,7 +43,6 @@ export function renderFooter() {
           </ul>
         </div>
 
-        <!-- Help -->
         <div class="col-md-3">
           <h3 class="small text-uppercase mb-2 bh-footer-title">Help</h3>
           <ul class="list-unstyled small mb-0">

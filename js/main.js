@@ -17,5 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderFooter();
 
   updateCountdowns();
-  setInterval(updateCountdowns, 60_000);
+  setInterval(updateCountdowns, 1000);
 });

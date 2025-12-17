@@ -290,9 +290,17 @@
   display: inline-flex;
   align-items: center;
   padding: 0.15rem 0.7rem;
-  border-radius: 999px;
-  background-color: v.$bh-color-page-bg;
+  border-radius: v.$bh-radius-pill;
   font-size: 0.75rem;
+  border: 1px solid v.$bh-color-border;
+  background-color: v.$bh-color-page-bg;
+  color: v.$bh-color-text-muted;
+}
+
+.bh-tag-ended {
+  background-color: v.$bh-color-ended-bg;
+  border-color: v.$bh-color-ended-bg;
+  color: v.$bh-color-ended-text;
 }
 
 .bh-bid-summary-card {
@@ -302,12 +310,14 @@
 .bh-time-chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.9rem;
-  border-radius: 999px;
-  background-color: #fee2c5;
-  color: #9a3412;
+  gap: 0.25rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: v.$bh-radius-pill;
+  background-color: v.$bh-color-timechip-bg;
+  color: v.$bh-color-timechip-text;
   font-size: 0.8rem;
 }
+
 .bh-bid-alert {
   border-radius: 0.75rem;
   border-left: 4px solid #2563eb;
@@ -320,4 +330,39 @@
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
   border: 1px solid v.$bh-color-border;
+}
+
+.bh-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 575.98px) {
+  .bh-form-actions .bh-btn-primary,
+  .bh-form-actions .bh-btn-outline,
+  .bh-form-actions .bh-btn-danger-outline {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.bh-btn-danger-outline {
+  display: inline-block;
+  background-color: transparent;
+  color: v.$bh-color-accent;
+  text-decoration: none;
+  border-radius: v.$bh-radius-pill;
+  padding: 0.425rem 1.5rem;
+  border: 1px solid v.$bh-color-danger-outline-border;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background-color: v.$bh-color-danger-outline-hover-bg;
+    border-color: v.$bh-color-danger-outline-hover-border;
+    text-decoration: none;
+  }
 }

@@ -15,17 +15,28 @@ export function formatEndsAt(isoString) {
   });
 }
 
-export function formatTimeRemaining(isoString) {
-  if (!isoString) return "No end time";
+export function formatTimeRemaining(iso) {
+  if (!iso) return "No end time";
+
+  const end = new Date(iso);
   const now = new Date();
-  const end = new Date(isoString);
-  const diffMs = end.getTime() - now.getTime();
-  if (diffMs <= 0) return "Ended";
 
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const hours = Math.floor(diffMinutes / 60);
-  const minutes = diffMinutes % 60;
+  if (Number.isNaN(end.getTime())) return "No end time";
 
-  if (hours <= 0) return `Ends in ${minutes} min`;
-  return `Ends in ${hours}h ${minutes}m`;
+  const diffMs = end - now;
+
+  if (diffMs <= 0) {
+    return "Ended";
+  }
+
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const days = Math.floor(totalSeconds / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
 }

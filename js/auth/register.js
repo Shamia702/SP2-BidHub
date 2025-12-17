@@ -1,5 +1,4 @@
-import { API_BASE, AUCTION_URL, API_KEY } from "../api/config.js";
-import { saveAuth, updateUser } from "../utils/storage.js";
+import { API_BASE, API_KEY } from "../api/config.js";
 
 const form = document.querySelector("#registerForm");
 const alertBox = document.querySelector("#registerAlert");
@@ -20,28 +19,6 @@ function clearAlert() {
 
 function isValidStudentEmail(email) {
   return email.toLowerCase().endsWith("@stud.noroff.no");
-}
-
-async function fetchProfile(name, token) {
-  const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}`,
-    {
-      headers: {
-        "X-Noroff-API-Key": API_KEY,
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load profile after register."
-    );
-  }
-
-  return json.data;
 }
 
 async function handleRegister(event) {
@@ -98,24 +75,11 @@ async function handleRegister(event) {
       return;
     }
 
-    const authData = json.data;
-    saveAuth(authData);
-    const profile = await fetchProfile(authData.name, authData.accessToken);
-
-    updateUser({
-      name: profile.name,
-      email: profile.email,
-      avatar: profile.avatar,
-      banner: profile.banner,
-      credits: profile.credits,
-      bio: profile.bio,
-    });
-
-    showAlert("success", "Registration successful! Redirecting…");
+    showAlert("success", "Registration successful! You can now log in.");
 
     setTimeout(() => {
-      window.location.href = "/auction/auctions.html";
-    }, 900);
+      window.location.href = "/auth/login.html";
+    }, 1200);
   } catch (error) {
     console.error(error);
     showAlert(

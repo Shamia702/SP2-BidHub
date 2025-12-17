@@ -113,7 +113,6 @@ export function renderHeader() {
             </li>
           </ul>
 
-          <!-- Right side: credits + user dropdown -->
           <div class="d-flex align-items-center gap-3">
             <span class="bh-credits text-sm">
               Credits: <strong>${credits}</strong>

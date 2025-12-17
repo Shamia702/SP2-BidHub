@@ -44,6 +44,14 @@ function renderHeroListing(listing) {
   const bidsCount = _count?.bids ?? 0;
   const timeText = formatTimeRemaining(endsAt);
 
+  const now = new Date();
+  const ends = endsAt ? new Date(endsAt) : null;
+  const isEnded = ends && ends <= now;
+
+  const endedTag = isEnded
+    ? `<span class="bh-tag-pill bh-tag-ended">Ended</span>`
+    : "";
+
   heroCard.innerHTML = `
     <figure class="mb-3">
       ${
@@ -53,15 +61,24 @@ function renderHeroListing(listing) {
       }
     </figure>
     <h2 class="h6 mb-1">${title}</h2>
-    <p class="text-muted small mb-1">
-      Current bid: ${highestBid} credits
+    <p class="mb-1 small">
+      <strong>Current bid:</strong> ${highestBid} credits
     </p>
-    <p class="text-muted small mb-1">
-      ${bidsCount} bid${bidsCount === 1 ? "" : "s"} • ${timeText}
+    <p class="text-muted small mb-2 d-flex flex-wrap align-items-center gap-2">
+      <span class="bh-time-chip">
+        <span class="me-1">⏱️</span>
+        <span class="bh-countdown" data-ends-at="${endsAt || ""}">
+          ${timeText}
+        </span>
+      </span>
+      ${endedTag}
+      <span class="small">
+        ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
+      </span>
     </p>
-    <a href="./auction/single-listing-page.html?id=${encodeURIComponent(
+    <a href="/auction/single-listing-page.html?id=${encodeURIComponent(
       id
-    )}" class="bh-btn-primary btn-sm">
+    )}" class="bh-btn-primary btn-sm w-100 text-center mt-1">
       View listing
     </a>
   `;
@@ -75,6 +92,14 @@ function createFeaturedCard(listing) {
   const highestBid = getHighestBidAmount(listing);
   const bidsCount = _count?.bids ?? 0;
   const timeText = formatTimeRemaining(endsAt);
+
+  const now = new Date();
+  const ends = endsAt ? new Date(endsAt) : null;
+  const isEnded = ends && ends <= now;
+
+  const endedTag = isEnded
+    ? `<span class="bh-tag-pill bh-tag-ended">Ended</span>`
+    : "";
 
   return `
     <div class="col-md-4">
@@ -90,12 +115,21 @@ function createFeaturedCard(listing) {
         <p class="mb-1 small">
           <strong>Current bid:</strong> ${highestBid} credits
         </p>
-        <p class="text-muted small mb-3">
-          ${bidsCount} bid${bidsCount === 1 ? "" : "s"} • ${timeText}
+        <p class="text-muted small mb-2 d-flex flex-wrap align-items-center gap-2">
+          <span class="bh-time-chip">
+            <span class="me-1">⏱️</span>
+            <span class="bh-countdown" data-ends-at="${endsAt || ""}">
+              ${timeText}
+            </span>
+          </span>
+          ${endedTag}
+          <span class="small">
+            ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
+          </span>
         </p>
-        <a href="./auction/single-listing-page.html?id=${encodeURIComponent(
+        <a href="/auction/single-listing-page.html?id=${encodeURIComponent(
           id
-        )}" class="bh-btn-outline btn-sm">
+        )}" class="bh-btn-outline btn-sm w-100 text-center mt-1">
           View listing
         </a>
       </article>
@@ -106,6 +140,7 @@ function createFeaturedCard(listing) {
 async function renderLanding() {
   const grid = document.querySelector("#featured-auctions-grid");
   if (!grid) return;
+
   renderHeroSkeleton();
   renderFeaturedSkeleton(3);
 

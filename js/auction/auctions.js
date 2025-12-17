@@ -56,25 +56,47 @@ function buildCard(listing) {
     ? formatTimeRemaining(listing.endsAt)
     : "No end time";
 
+  const now = new Date();
+  const ends = listing.endsAt ? new Date(listing.endsAt) : null;
+  const isEnded = ends && ends <= now;
+
+  const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : 0;
+
+  const statusTag = isEnded
+    ? `<span class="bh-tag-pill bh-tag-ended">Ended</span>`
+    : "";
+
   return `
     <div class="col-md-6 col-lg-4">
       <article class="bh-card h-100 d-flex flex-column p-3">
         <div class="mb-3">
           ${
             mainImage && mainImage.url
-              ? `<img src="${mainImage.url}" alt="${mainImage.alt || listing.title || "Listing image"}" class="img-fluid rounded-3 w-100" style="max-height: 180px; object-fit: cover;" />`
+              ? `<img src="${mainImage.url}" alt="${
+                  mainImage.alt || listing.title || "Listing image"
+                }" class="bh-listing-img" />`
               : `<div class="bh-skeleton-thumb mb-0"></div>`
           }
         </div>
+
         <h2 class="h6 mb-1">${listing.title}</h2>
-        <p class="text-muted small mb-2">
+        <p class="text-muted small mb-1">
           Current bid: <strong>${highestBid} credits</strong>
         </p>
-        <p class="text-muted small mb-3">
-          <span class="bh-countdown" data-ends-at="${listing.endsAt || ""}">
-            ${timeText}
+
+        <p class="text-muted small mb-3 d-flex flex-wrap align-items-center gap-2">
+          <span class="bh-time-chip">
+            <span class="me-1">⏱️</span>
+            <span class="bh-countdown" data-ends-at="${listing.endsAt || ""}">
+              ${timeText}
+            </span>
+          </span>
+          ${statusTag}
+          <span class="small">
+            ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
           </span>
         </p>
+
         <div class="mt-auto">
           <a
             href="/auction/single-listing-page.html?id=${listing.id}"
@@ -234,7 +256,9 @@ function updateSuggestions(term) {
               <div class="bh-search-suggestion-thumb">
                 ${
                   img && img.url
-                    ? `<img src="${img.url}" alt="${img.alt || item.title || "Listing image"}" />`
+                    ? `<img src="${img.url}" alt="${
+                        img.alt || item.title || "Listing image"
+                      }" />`
                     : `<span>Image</span>`
                 }
               </div>

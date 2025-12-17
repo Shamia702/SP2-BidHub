@@ -41,7 +41,6 @@ function getBidderDisplayName(bid) {
   return "unknown";
 }
 
-// Refresh user credits from API and update header
 async function refreshUserCredits() {
   const user = getUser();
   const token = getToken();
@@ -75,16 +74,12 @@ async function refreshUserCredits() {
       bio: profile.bio,
     });
 
-    // Re-render header with fresh credits
     renderHeader();
   } catch (error) {
     console.error("Error refreshing user credits", error);
   }
 }
 
-/* ---------- API calls ---------- */
-
-// Fetch listing with seller + bids
 async function fetchListing() {
   const url = `${AUCTION_URL}/listings/${listingId}?_seller=true&_bids=true`;
 
@@ -105,14 +100,11 @@ async function fetchListing() {
   return json.data;
 }
 
-/* ---------- render main listing ---------- */
-
 function renderListing(listing) {
   const container = document.querySelector("#single-listing");
   if (!container) return;
 
   const user = getUser();
-
   const {
     title,
     description,
@@ -134,7 +126,6 @@ function renderListing(listing) {
 
   const sellerName =
     seller?.name || seller?.username || seller?.email || "Unknown seller";
-
   container.innerHTML = `
     <div class="row gy-4">
       <!-- Left: gallery -->
@@ -184,13 +175,14 @@ function renderListing(listing) {
             <p class="text-muted small mb-1">
               Sold by <strong>@${sellerName}</strong>
             </p>
-            <p class="text-muted small mb-0">
-              <span class="badge bg-light text-muted">
+            <p class="text-muted small mb-0 d-flex flex-wrap align-items-center gap-2">
+              <span class="bh-time-chip">
+                <span class="me-1">⏱️</span>
                 <span class="bh-countdown" data-ends-at="${endsAt || ""}">
                   ${timeText}
                 </span>
               </span>
-              <span class="ms-2">
+              <span class="small">
                 ${bidsCount} bid${bidsCount === 1 ? "" : "s"}
               </span>
             </p>
@@ -217,7 +209,6 @@ function renderListing(listing) {
     </div>
   `;
 
-  // Thumb click → swap main image
   const thumbButtons = container.querySelectorAll(".bh-listing-thumb-btn");
   if (thumbButtons && mainImage) {
     const mainImgEl = container.querySelector(".bh-listing-main-img");
@@ -235,8 +226,6 @@ function renderListing(listing) {
   renderBidSection(listing, user, highestBid);
   renderBidsList(listing);
 }
-
-/* ---------- render bid section ---------- */
 
 function renderBidSection(listing, user, highestBid) {
   const bidSection = document.querySelector("#listing-bid-section");
@@ -271,11 +260,7 @@ function renderBidSection(listing, user, highestBid) {
   }
 
   bidSection.innerHTML = `
-    <div
-      id="bidAlert"
-      class="alert d-none small mb-2"
-      role="alert"
-    ></div>
+    <div id="bidAlert" class="alert d-none small mb-2" role="alert"></div>
 
     <form id="bidForm">
       <div class="mb-2">
@@ -309,8 +294,6 @@ function renderBidSection(listing, user, highestBid) {
     );
   }
 }
-
-/* ---------- render bids list ---------- */
 
 function renderBidsList(listing) {
   const container = document.querySelector("#listing-bids");
@@ -358,8 +341,6 @@ function renderBidsList(listing) {
   `;
 }
 
-/* ---------- alerts ---------- */
-
 function showBidAlert(type, message) {
   const alert = document.querySelector("#bidAlert");
   if (!alert) return;
@@ -368,8 +349,6 @@ function showBidAlert(type, message) {
   alert.textContent = message;
   alert.classList.remove("d-none");
 }
-
-/* ---------- submit bid ---------- */
 
 async function handleBidSubmit(event, listing, highestBid) {
   event.preventDefault();
@@ -417,10 +396,7 @@ async function handleBidSubmit(event, listing, highestBid) {
     showBidAlert("success", "Bid placed successfully!");
     amountInput.value = "";
 
-    // 1) Refresh credits in header
     await refreshUserCredits();
-
-    // 2) Reload listing to update highest bid + history
     await loadListing();
   } catch (error) {
     console.error(error);
@@ -430,8 +406,6 @@ async function handleBidSubmit(event, listing, highestBid) {
     );
   }
 }
-
-/* ---------- load listing ---------- */
 
 async function loadListing() {
   const listingSection = document.querySelector("#single-listing");
@@ -455,8 +429,6 @@ async function loadListing() {
     bidsSection.innerHTML = "";
   }
 }
-
-/* ---------- init ---------- */
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!listingId) {
