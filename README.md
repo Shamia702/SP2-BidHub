@@ -123,7 +123,7 @@ npm install
 
 ```bash
 npm run dev
-
+```
 ###  Open the project in VS Code
 
 1. Open the folder in **Visual Studio Code**.
