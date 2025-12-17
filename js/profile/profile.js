@@ -81,9 +81,7 @@ async function fetchProfileBids(name) {
   const token = getToken();
 
   const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(
-      name
-    )}/bids?_listings=true`,
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}/bids?_listings=true`,
     {
       headers: {
         "X-Noroff-API-Key": API_KEY,
@@ -95,9 +93,7 @@ async function fetchProfileBids(name) {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load your bids."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not load your bids.");
   }
 
   return Array.isArray(json.data) ? json.data : [];
@@ -110,14 +106,13 @@ function renderProfileHeader(profile) {
   const avatarUrl = getAvatarUrlFromProfile(profile);
   const bannerUrl = getBannerUrlFromProfile(profile);
   const initials = profile.name?.[0]?.toUpperCase() || "U";
-  const credits =
-    typeof profile.credits === "number" ? profile.credits : 0;
+  const credits = typeof profile.credits === "number" ? profile.credits : 0;
 
   const bannerStyle = bannerUrl
     ? `style="background-image:url('${bannerUrl}');"`
     : "";
 
-    container.innerHTML = `
+  container.innerHTML = `
     <article class="bh-card p-0 bh-profile-header-card">
       <div class="bh-profile-banner" ${bannerStyle}></div>
       <div class="bh-profile-header-body">
@@ -152,8 +147,7 @@ function renderProfileHeader(profile) {
       </div>
     </article>
   `;
-
-  }
+}
 
 function renderProfileBio(profile) {
   const container = document.querySelector("#profile-bio");
@@ -178,8 +172,7 @@ function renderProfileSummary(profile, bids) {
   const listings = Array.isArray(profile.listings) ? profile.listings : [];
   const totalListings = listings.length;
   const totalBids = Array.isArray(bids) ? bids.length : 0;
-  const credits =
-    typeof profile.credits === "number" ? profile.credits : 0;
+  const credits = typeof profile.credits === "number" ? profile.credits : 0;
 
   container.innerHTML = `
     <article class="bh-card p-3 p-lg-4">
@@ -271,7 +264,7 @@ function renderProfileActivity(profile, bids) {
                     <div>
                       <p class="mb-1 small">
                         <a
-                          href="/auction/listing.html?id=${recentListing.id}"
+                          href="/auction/single-listing-page.html?id=${recentListing.id}"
                           class="bh-link-muted"
                         >
                           <strong>${recentListing.title}</strong>
@@ -310,10 +303,8 @@ function renderProfileActivity(profile, bids) {
             ? (() => {
                 const thumb = getBidListingThumb(recentBid);
                 const listingTitle = getBidListingTitle(recentBid);
-                const listingId =
-                  recentBid.listing?.id || recentBid.listingId;
-                const endsAt =
-                  recentBid.listing?.endsAt || null;
+                const listingId = recentBid.listing?.id || recentBid.listingId;
+                const endsAt = recentBid.listing?.endsAt || null;
                 const timeText = endsAt
                   ? formatTimeRemaining(endsAt)
                   : "No end time";
@@ -331,7 +322,7 @@ function renderProfileActivity(profile, bids) {
                       <p class="mb-1 small">
                         ${
                           listingId
-                            ? `<a href="/auction/listing.html?id=${listingId}" class="bh-link-muted">
+                            ? `<a href="/auction/single-listing-page.html?id=${listingId}" class="bh-link-muted">
                                  <strong>${listingTitle}</strong>
                                </a>`
                             : `<strong>${listingTitle}</strong>`

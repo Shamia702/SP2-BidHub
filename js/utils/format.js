@@ -1,10 +1,7 @@
 export function getHighestBidAmount(listing) {
   const bids = listing.bids || [];
   if (!bids.length) return 0;
-  return bids.reduce(
-    (max, bid) => (bid.amount > max ? bid.amount : max),
-    0
-  );
+  return bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0);
 }
 
 export function formatEndsAt(isoString) {

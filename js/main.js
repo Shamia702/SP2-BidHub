@@ -18,4 +18,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateCountdowns();
   setInterval(updateCountdowns, 60_000);
-}); 
+});

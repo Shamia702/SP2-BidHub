@@ -44,10 +44,7 @@ function showSkeletons(count = PAGE_SIZE) {
 function getHighestBid(listing) {
   const bids = Array.isArray(listing.bids) ? listing.bids : [];
   if (!bids.length) return 0;
-  return bids.reduce(
-    (max, bid) => (bid.amount > max ? bid.amount : max),
-    0
-  );
+  return bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0);
 }
 
 function buildCard(listing) {
@@ -150,16 +147,14 @@ function renderPagination(totalPages) {
     </ul>
   `;
 
-  paginationEl
-    .querySelectorAll("button[data-page]")
-    .forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const page = Number(btn.dataset.page);
-        if (!Number.isNaN(page)) {
-          renderListingsPage(page);
-        }
-      });
+  paginationEl.querySelectorAll("button[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const page = Number(btn.dataset.page);
+      if (!Number.isNaN(page)) {
+        renderListingsPage(page);
+      }
     });
+  });
 }
 
 function applyFilters() {
@@ -216,7 +211,7 @@ function updateSuggestions(term) {
       const desc = item.description?.toLowerCase() || "";
       return title.includes(q) || desc.includes(q);
     })
-    .slice(0, 6); 
+    .slice(0, 6);
 
   if (!matches.length) {
     clearSuggestions();
@@ -232,9 +227,7 @@ function updateSuggestions(term) {
           const timeText = item.endsAt
             ? formatTimeRemaining(item.endsAt)
             : "No end time";
-          const bidsCount = Array.isArray(item.bids)
-            ? item.bids.length
-            : 0;
+          const bidsCount = Array.isArray(item.bids) ? item.bids.length : 0;
 
           return `
             <li class="bh-search-suggestion-card" data-id="${item.id}">
@@ -262,16 +255,14 @@ function updateSuggestions(term) {
 
   suggestionsEl.innerHTML = markup;
   suggestionsEl.style.display = "block";
-  suggestionsEl
-    .querySelectorAll(".bh-search-suggestion-card")
-    .forEach((el) => {
-      el.addEventListener("click", () => {
-        const id = el.getAttribute("data-id");
-        if (id) {
-          window.location.href = `/auction/single-listing-page.html?id=${id}`;
-        }
-      });
+  suggestionsEl.querySelectorAll(".bh-search-suggestion-card").forEach((el) => {
+    el.addEventListener("click", () => {
+      const id = el.getAttribute("data-id");
+      if (id) {
+        window.location.href = `/auction/single-listing-page.html?id=${id}`;
+      }
     });
+  });
 }
 
 async function fetchAllListings() {
@@ -286,9 +277,7 @@ async function fetchAllListings() {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load auctions."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not load auctions.");
   }
 
   return json.data || [];

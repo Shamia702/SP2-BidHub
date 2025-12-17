@@ -57,16 +57,15 @@ export function renderHeader() {
     return;
   }
 
- const credits = user.credits ?? 0;
-const name = user.name ?? "User";
+  const credits = user.credits ?? 0;
+  const name = user.name ?? "User";
 
-const avatarUrl =
-  (user.avatar && typeof user.avatar === "string" && user.avatar) ||
-  (user.avatar && typeof user.avatar === "object" && user.avatar.url) ||
-  null;
+  const avatarUrl =
+    (user.avatar && typeof user.avatar === "string" && user.avatar) ||
+    (user.avatar && typeof user.avatar === "object" && user.avatar.url) ||
+    null;
 
-const initials = name?.[0]?.toUpperCase() || "U";
-
+  const initials = name?.[0]?.toUpperCase() || "U";
 
   header.innerHTML = `
     <nav class="navbar navbar-expand-lg bh-navbar fixed-top">

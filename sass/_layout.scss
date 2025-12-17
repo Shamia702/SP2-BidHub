@@ -1,6 +1,5 @@
 @use "variables" as v;
 
-// Sticky layout: header at top, footer at bottom, main stretches
 html,
 body {
   height: 100%;
@@ -9,25 +8,14 @@ body {
 body {
   display: flex;
   flex-direction: column;
-}
-
-// Your main content wrapper
-main.bh-page {
-  flex: 1 0 auto;
-}
-
-.bh-footer {
-  margin-top: auto;
-}
-
-body {
   background-color: v.$bh-color-page-bg;
   color: v.$bh-color-text-main;
   font-family: v.$bh-font-sans;
 }
 
-.bh-page {
-  padding-top: 100px;         
+main.bh-page {
+  flex: 1 0 auto;
+  padding-top: 100px;
   padding-bottom: 80px;
 }
 
@@ -37,13 +25,15 @@ body {
   border: 1px solid v.$bh-color-border;
 }
 
-// Base navbar styling
+.bh-footer {
+  margin-top: auto;
+}
+
 .bh-navbar {
-  background-color: v.$bh-color-surface; // white card background
+  background-color: v.$bh-color-surface;
   border-bottom: 1px solid v.$bh-color-border;
 }
 
-// Make the toggler icon visible on light background
 .navbar-toggler {
   border-color: v.$bh-color-border;
 }
@@ -52,7 +42,6 @@ body {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(31, 41, 55, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-// Mobile menu (collapsed content)
 @media (max-width: 991.98px) {
   .bh-navbar .navbar-collapse {
     margin-top: 0.5rem;

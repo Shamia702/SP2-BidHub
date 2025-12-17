@@ -55,10 +55,7 @@ function showSkeletons(count = 6) {
 function getHighestBid(listing) {
   const bids = Array.isArray(listing.bids) ? listing.bids : [];
   if (!bids.length) return 0;
-  return bids.reduce(
-    (max, bid) => (bid.amount > max ? bid.amount : max),
-    0
-  );
+  return bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0);
 }
 
 function isListingActive(listing) {
@@ -69,14 +66,14 @@ function isListingActive(listing) {
   return end > now;
 }
 
-
 function buildListingCard(listing) {
   const images = Array.isArray(listing.media) ? listing.media : [];
   const mainImage = images[0] || null;
 
   const highestBid = getHighestBid(listing);
   const bidsCount =
-    listing._count?.bids ?? (Array.isArray(listing.bids) ? listing.bids.length : 0);
+    listing._count?.bids ??
+    (Array.isArray(listing.bids) ? listing.bids.length : 0);
 
   const timeText = listing.endsAt
     ? formatTimeRemaining(listing.endsAt)
@@ -190,8 +187,7 @@ async function deleteListing(id) {
 
     if (!res.ok) {
       const json = await res.json().catch(() => null);
-      const message =
-        json?.errors?.[0]?.message || "Could not delete listing.";
+      const message = json?.errors?.[0]?.message || "Could not delete listing.";
       showAlert("danger", message);
       return;
     }

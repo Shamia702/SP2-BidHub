@@ -42,10 +42,7 @@ function clearAlert() {
 
 function getHighestBid(bids = []) {
   if (!Array.isArray(bids) || !bids.length) return 0;
-  return bids.reduce(
-    (max, bid) => (bid.amount > max ? bid.amount : max),
-    0
-  );
+  return bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0);
 }
 
 function getUserHighestBid(bids = [], userName) {
@@ -167,10 +164,7 @@ async function handleSubmit(event) {
   const amount = Number(raw);
 
   if (!raw || Number.isNaN(amount) || amount < minAllowedBid) {
-    showAlert(
-      "warning",
-      `Your bid must be at least ${minAllowedBid} credits.`
-    );
+    showAlert("warning", `Your bid must be at least ${minAllowedBid} credits.`);
     return;
   }
 
@@ -179,18 +173,15 @@ async function handleSubmit(event) {
   submitBtn.textContent = "Updating...";
 
   try {
-    const res = await fetch(
-      `${AUCTION_URL}/listings/${listingId}/bids`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-Noroff-API-Key": API_KEY,
-        },
-        body: JSON.stringify({ amount }),
-      }
-    );
+    const res = await fetch(`${AUCTION_URL}/listings/${listingId}/bids`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
+      },
+      body: JSON.stringify({ amount }),
+    });
 
     const json = await res.json();
 

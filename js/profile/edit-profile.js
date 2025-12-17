@@ -44,9 +44,7 @@ async function fetchProfile(name, token) {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load profile."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not load profile.");
   }
 
   return json.data;

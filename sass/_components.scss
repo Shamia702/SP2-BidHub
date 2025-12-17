@@ -1,10 +1,9 @@
 @use "variables" as v;
 
-/* NAV LINKS (center Home / Auctions) */
-.bh-navbar{
-  background-color: v.$bh-color-surface;
+.bh-navbar {
   height: 70px;
 }
+
 .bh-nav-link {
   color: v.$bh-color-text-muted;
   font-size: 0.95rem;
@@ -18,13 +17,15 @@
     color: v.$bh-color-text-main;
   }
 }
+
 .bh-logo-img {
-  height: 48px; // tweak to match your Figma
+  height: 48px;
 }
+
 .bh-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;       // 🔵 makes it a circle
+  border-radius: 50%;
   overflow: hidden;
   background-color: v.$bh-color-border;
   display: inline-flex;
@@ -32,7 +33,7 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: v.$bh-color-text-muted; // or a suitable muted text color
+  color: v.$bh-color-text-muted;
 }
 
 .bh-avatar img {
@@ -40,30 +41,6 @@
   height: 100%;
   object-fit: cover;
 }
-
-// Bigger avatar (for profile page)
-.bh-avatar-lg {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;       // 🔵 circle
-  overflow: hidden;
-  background-color: v.$bh-color-border;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: v.$bh-color-text-muted;
-}
-
-.bh-avatar-lg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-/* HERO */
 
 .bh-hero-section {
   margin-bottom: 2rem;
@@ -77,14 +54,50 @@
   border-radius: 1rem;
 }
 
-// BUTTONS
+.bh-hero-image-placeholder {
+  background-color: v.$bh-color-border;
+  border-radius: v.$bh-radius-card;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: v.$bh-color-text-muted;
+  font-size: 0.9rem;
+}
+
+.bh-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: v.$bh-radius-pill;
+  background-color: v.$bh-color-page-bg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+.bh-icon-circle-students i {
+  color: #2563eb;
+}
+
+.bh-icon-circle-credits i {
+  color: #22c55e;
+}
+
+.bh-icon-circle-speed i {
+  color: #f97316;
+}
+
 .bh-btn-primary {
   display: inline-block;
   background-color: v.$bh-color-primary;
   color: v.$bh-color-surface;
   text-decoration: none;
   border-radius: 1.5rem;
-  padding: 0.425rem 1.5rem; // ~10px vertical, more horizontal
+  padding: 0.425rem 1.5rem;
   border: 1px solid v.$bh-color-primary;
   font-size: 0.95rem;
   font-weight: 500;
@@ -116,38 +129,12 @@
   }
 }
 
-/* small versions, e.g. View listing */
 .bh-btn-primary.btn-sm,
 .bh-btn-outline.btn-sm {
   padding: 0.35rem 0.9rem;
   font-size: 0.85rem;
 }
 
-
-/* grey image placeholder in hero */
-.bh-hero-image-placeholder {
-  background-color: v.$bh-color-border;
-  border-radius: v.$bh-radius-card;
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: v.$bh-color-text-muted;
-  font-size: 0.9rem;
-}
-
-/* Why BidHub icon circle */
-.bh-icon-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: v.$bh-radius-pill;
-  background-color: v.$bh-color-page-bg;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Listing image placeholders / real images */
 .bh-listing-thumb {
   background-color: v.$bh-color-border;
   border-radius: v.$bh-radius-card;
@@ -161,12 +148,10 @@
   border-radius: v.$bh-radius-card;
 }
 
-/* Footer styles (4-column footer) */
 .bh-footer {
   background-color: #0f172a;
   padding-top: 1.5rem;
   padding-bottom: 1rem;
-  margin-top: 2rem;
 }
 
 .bh-footer-title {
@@ -186,7 +171,6 @@
   }
 }
 
-/* Muted inline link used for "View all auctions →" */
 .bh-link-muted {
   font-size: 0.9rem;
   color: v.$bh-color-primary;
@@ -197,12 +181,10 @@
   }
 }
 
-
-// SEARCH & FILTER BAR ON AUCTIONS PAGE
 .bh-search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1rem; // vertical, horizontal gap
+  gap: 0.75rem 1rem;
   align-items: flex-end;
   margin-bottom: 0.5rem;
 }
@@ -210,6 +192,7 @@
 .bh-search-main {
   flex: 1 1 230px;
   min-width: 220px;
+  position: relative;
 }
 
 .bh-search-sort {
@@ -222,7 +205,6 @@
   gap: 0.5rem;
 }
 
-/* Slightly softer look for search + select */
 .bh-search-input,
 .bh-search-select {
   border-radius: 999px;
@@ -239,10 +221,6 @@
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 
-.bh-search-main {
-  position: relative;
-}
-
 .bh-search-suggestions {
   position: absolute;
   left: 0;
@@ -257,7 +235,7 @@
   max-height: 260px;
   overflow-y: auto;
   font-size: 0.875rem;
-  display: none; // JS will switch to block when there are suggestions
+  display: none;
 }
 
 .bh-search-suggestions-list {
@@ -272,10 +250,10 @@
   gap: 0.75rem;
   padding: 0.4rem 0.75rem;
   cursor: pointer;
-}
 
-.bh-search-suggestion-card:hover {
-  background-color: v.$bh-color-page-bg;
+  &:hover {
+    background-color: v.$bh-color-page-bg;
+  }
 }
 
 .bh-search-suggestion-thumb {
@@ -290,12 +268,12 @@
   justify-content: center;
   font-size: 0.7rem;
   color: v.$bh-color-text-muted;
-}
 
-.bh-search-suggestion-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .bh-search-suggestion-title {
@@ -308,8 +286,6 @@
   color: v.$bh-color-text-muted;
 }
 
-
-// Tag pill under title
 .bh-tag-pill {
   display: inline-flex;
   align-items: center;
@@ -319,27 +295,10 @@
   font-size: 0.75rem;
 }
 
-// Single listing images
-.bh-listing-main-img {
-  width: 100%;
-  max-height: 360px;
-  object-fit: cover;
-  border-radius: v.$bh-radius-card;
-}
-
-.bh-listing-thumb-img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: v.$bh-radius-card;
-}
-
-// Bid summary card right side
 .bh-bid-summary-card {
   font-size: 0.9rem;
 }
 
-// Orange time chip
 .bh-time-chip {
   display: inline-flex;
   align-items: center;
@@ -349,8 +308,6 @@
   color: #9a3412;
   font-size: 0.8rem;
 }
-
-// Blue info alert box
 .bh-bid-alert {
   border-radius: 0.75rem;
   border-left: 4px solid #2563eb;
@@ -358,73 +315,9 @@
   padding: 0.75rem;
 }
 
-// Bid history rows
 .bh-bid-history-item {
   background-color: v.$bh-color-surface;
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
   border: 1px solid v.$bh-color-border;
-}
-
-.bh-profile-header-card {
-  overflow: hidden;
-  background-color: v.$bh-color-surface;
-}
-
-.bh-profile-banner {
-  height: 96px;
-  background-color: v.$bh-color-page-bg; // fallback if no banner
-  border-bottom: 1px solid v.$bh-color-border;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.bh-profile-header-body {
-  padding: 1.5rem 1.75rem 1.75rem;
-}
-
-.bh-profile-avatar-wrap {
-  margin-top: -2.5rem;
-}
-
-// .bh-avatar-lg {
-//   width: 72px;
-//   height: 72px;
-//   border-radius: 50%;
-//   overflow: hidden;
-//   background-color: v.$bh-color-surface;
-//   border: 4px solid v.$bh-color-surface;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: 1.5rem;
-//   font-weight: 600;
-//   color: v.$bh-color-muted;
-// }
-
-.bh-avatar-lg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// Thumbnail placeholder in Recent listing / Recent bids
-.bh-profile-item-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 0;
-}
-
-.bh-profile-thumb {
-  width: 72px;
-  height: 56px;
-  border-radius: 0.75rem;
-  background-color: v.$bh-color-page-bg;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  color: v.$bh-color-text-muted;
 }

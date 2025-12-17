@@ -7,8 +7,12 @@
       name="description"
       content="BidHub is a student-focused auction platform for Noroff students. Browse live auctions, view listings and bid using credits instead of cash."
     />
-    <meta name="author" content="Shamia"/>
+    <meta name="author" content="Shamia" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
     <link rel="stylesheet" href="css/styles.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -19,7 +23,6 @@
     <header id="site-header"></header>
     <main class="bh-page">
       <div class="container">
-
         <section class="bh-hero-section">
           <div class="bh-card bh-hero-card p-4 p-lg-5">
             <div class="row align-items-center gy-4">
@@ -43,18 +46,21 @@
                 </div>
               </div>
 
-             <div class="col-lg-5">
-  <article class="bh-card bh-hero-listing-card p-3" id="hero-featured-card">
-    <div class="bh-hero-image-placeholder mb-3">
-      <span>Image</span>
-    </div>
-    <h2 class="h6 mb-1">Loading featured auction…</h2>
-    <p class="text-muted small mb-3">Please wait a moment.</p>
-    <button class="bh-btn-primary btn-sm" disabled>View listing</button>
-  </article>
-</div>
-
-
+              <div class="col-lg-5">
+                <article
+                  class="bh-card bh-hero-listing-card p-3"
+                  id="hero-featured-card"
+                >
+                  <div class="bh-hero-image-placeholder mb-3">
+                    <span>Image</span>
+                  </div>
+                  <h2 class="h6 mb-1">Loading featured auction…</h2>
+                  <p class="text-muted small mb-3">Please wait a moment.</p>
+                  <button class="bh-btn-primary btn-sm" disabled>
+                    View listing
+                  </button>
+                </article>
+              </div>
             </div>
           </div>
         </section>
@@ -64,7 +70,9 @@
           <div class="row gy-3">
             <div class="col-md-4">
               <article class="bh-card bh-why-card p-3 h-100">
-                <div class="bh-icon-circle mb-2">🎓</div>
+                <div class="bh-icon-circle mb-2 bh-icon-circle-students">
+                  <i class="bi bi-mortarboard-fill"></i>
+                </div>
                 <h3 class="h6 mb-1">Student-only community</h3>
                 <p class="text-muted small mb-0">
                   Only verified students can join, keeping auctions relevant and
@@ -74,7 +82,9 @@
             </div>
             <div class="col-md-4">
               <article class="bh-card bh-why-card p-3 h-100">
-                <div class="bh-icon-circle mb-2">💳</div>
+                <div class="bh-icon-circle mb-2 bh-icon-circle-credits">
+                  <i class="bi bi-credit-card-2-front"></i>
+                </div>
                 <h3 class="h6 mb-1">Credits, not cash</h3>
                 <p class="text-muted small mb-0">
                   Bid using credits instead of sharing your card details
@@ -84,7 +94,9 @@
             </div>
             <div class="col-md-4">
               <article class="bh-card bh-why-card p-3 h-100">
-                <div class="bh-icon-circle mb-2">⏱️</div>
+                <div class="bh-icon-circle mb-2 bh-icon-circle-speed">
+                  <i class="bi bi-clock-history"></i>
+                </div>
                 <h3 class="h6 mb-1">List or bid in minutes</h3>
                 <p class="text-muted small mb-0">
                   A clean interface for creating listings and placing bids
@@ -96,18 +108,16 @@
         </section>
 
         <section id="featured" class="py-4 py-lg-5">
-  <div
-    class="d-flex flex-wrap justify-content-between align-items-center mb-3"
-  >
-    <h2 class="mb-0">Featured auctions</h2>
-    <a href="./auction/auctions.html" class="bh-link-muted">
-      View all auctions →
-    </a>
-  </div>
-  <div id="featured-auctions-grid" class="row gy-4">
-  </div>
-</section>
-
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center mb-3"
+          >
+            <h2 class="mb-0">Featured auctions</h2>
+            <a href="./auction/auctions.html" class="bh-link-muted">
+              View all auctions →
+            </a>
+          </div>
+          <div id="featured-auctions-grid" class="row gy-4"></div>
+        </section>
       </div>
     </main>
     <footer id="site-footer" class="bh-footer"></footer>

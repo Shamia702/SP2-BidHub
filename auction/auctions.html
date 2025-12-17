@@ -9,7 +9,7 @@
       content="Browse all active auctions on BidHub. Search, sort and view student listings, and log in to place bids."
     />
     <meta name="author" content="Shamia" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="../css/styles.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -39,57 +39,58 @@
           </a>
         </header>
 
-       <section class="mb-4">
-  <form id="auctionSearchForm" class="bh-search-form">
-    <div class="bh-search-main">
-      <label class="bh-form-label d-none" for="auctionSearch">
-        Search
-      </label>
-      <input
-        type="search"
-        id="auctionSearch"
-        class="form-control bh-search-input"
-        placeholder="Search auctions by title or description"
-        autocomplete="off"
-      />
-      <div id="auctionSearchSuggestions" class="bh-search-suggestions"></div>
-    </div>
+        <section class="mb-4">
+          <form id="auctionSearchForm" class="bh-search-form">
+            <div class="bh-search-main">
+              <label class="bh-form-label d-none" for="auctionSearch">
+                Search
+              </label>
+              <input
+                type="search"
+                id="auctionSearch"
+                class="form-control bh-search-input"
+                placeholder="Search auctions by title or description"
+                autocomplete="off"
+              />
+              <div
+                id="auctionSearchSuggestions"
+                class="bh-search-suggestions"
+              ></div>
+            </div>
 
-    <div class="bh-search-actions">
-      <button type="submit" class="bh-btn-primary btn-sm">
-        Search
-      </button>
-      <button
-        type="button"
-        id="clearSearch"
-        class="bh-btn-outline btn-sm"
-      >
-        Clear
-      </button>
-    </div>
+            <div class="bh-search-actions">
+              <button type="submit" class="bh-btn-primary btn-sm">
+                Search
+              </button>
+              <button
+                type="button"
+                id="clearSearch"
+                class="bh-btn-outline btn-sm"
+              >
+                Clear
+              </button>
+            </div>
 
-    <div class="bh-search-sort">
-      <label class="bh-form-label d-none" for="sortSelect">
-        Sort by
-      </label>
-      <select
-        id="sortSelect"
-        class="form-select form-select-sm bh-search-select"
-      >
-        <option value="newest">Newest</option>
-        <option value="endingSoon">Ending soon</option>
-        <option value="mostBids">Most bids</option>
-      </select>
-    </div>
-  </form>
-</section>
+            <div class="bh-search-sort">
+              <label class="bh-form-label d-none" for="sortSelect">
+                Sort by
+              </label>
+              <select
+                id="sortSelect"
+                class="form-select form-select-sm bh-search-select"
+              >
+                <option value="newest">Newest</option>
+                <option value="endingSoon">Ending soon</option>
+                <option value="mostBids">Most bids</option>
+              </select>
+            </div>
+          </form>
+        </section>
 
         <section>
-          <div id="auctions-grid" class="row gy-4">
-          </div>
+          <div id="auctions-grid" class="row gy-4"></div>
 
-          <nav id="auctions-pagination" class="bh-pagination mt-3">
-          </nav>
+          <nav id="auctions-pagination" class="bh-pagination mt-3"></nav>
         </section>
       </div>
     </main>

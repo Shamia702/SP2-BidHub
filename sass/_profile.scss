@@ -1,35 +1,26 @@
 @use "variables" as v;
 
-// ----------------------------
-// Profile header (banner + avatar)
-// ----------------------------
-
 .bh-profile-header-card {
   overflow: hidden;
   border-radius: v.$bh-radius-card;
+  background-color: v.$bh-color-surface;
 }
 
 .bh-profile-banner {
   height: 160px;
-  background-color: v.$bh-color-primary; // fallback if no image
+  background-color: v.$bh-color-primary;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
-// Reduce space between bio/overview row and recent activity section
-#profile-activity {
-  margin-top: 0.5rem; // was effectively bigger because of Bootstrap spacing
-}
-
 
 .bh-profile-header-body {
   padding: 1rem 1.25rem 1.5rem;
 }
 
-// wrapper so avatar overlaps banner a bit
 .bh-profile-avatar-wrap {
   margin-top: -2.5rem;
 }
-
 .bh-avatar-lg {
   width: 80px;
   height: 80px;
@@ -44,35 +35,29 @@
   font-size: 1.25rem;
   color: v.$bh-color-text-main;
   overflow: hidden;
-}
 
-.bh-avatar-lg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
-
-// bigger avatar on desktop
 @media (min-width: 768px) {
   .bh-avatar-lg {
     width: 96px;
     height: 96px;
   }
 }
-
-// ----------------------------
-// Bio / cards common spacing
-// ----------------------------
+#profile-activity {
+  margin-top: 0.5rem;
+}
 
 #profile-bio .bh-card,
 #profile-overview .bh-card,
-#profile-activity .bh-card {
+#profile-activity .bh-card,
+#profile-summary .bh-card {
   border-radius: v.$bh-radius-card;
 }
-
-// ----------------------------
-// Overview card tweaks
-// ----------------------------
 
 #profile-overview .bh-card {
   min-height: 100%;
@@ -81,10 +66,6 @@
 #profile-overview .bh-btn-outline {
   font-size: 0.85rem;
 }
-
-// ----------------------------
-// Activity rows (recent listing / bid)
-// ----------------------------
 
 .bh-profile-item-row {
   display: flex;
@@ -99,15 +80,19 @@
   border-radius: v.$bh-radius-card;
   overflow: hidden;
   background-color: v.$bh-color-border;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: v.$bh-color-text-muted;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
-.bh-profile-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// slightly larger thumbnails on md+
 @media (min-width: 768px) {
   .bh-profile-thumb {
     flex-basis: 72px;

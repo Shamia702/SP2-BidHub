@@ -26,10 +26,7 @@ function formatBidDate(isoString) {
 function getBidderDisplayName(bid) {
   if (bid.bidder && typeof bid.bidder === "object") {
     return (
-      bid.bidder.name ||
-      bid.bidder.username ||
-      bid.bidder.email ||
-      "unknown"
+      bid.bidder.name || bid.bidder.username || bid.bidder.email || "unknown"
     );
   }
 
@@ -398,25 +395,21 @@ async function handleBidSubmit(event, listing, highestBid) {
   }
 
   try {
-    const res = await fetch(
-      `${AUCTION_URL}/listings/${listingId}/bids`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-Noroff-API-Key": API_KEY,
-        },
-        body: JSON.stringify({ amount }),
-      }
-    );
+    const res = await fetch(`${AUCTION_URL}/listings/${listingId}/bids`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
+      },
+      body: JSON.stringify({ amount }),
+    });
 
     const json = await res.json();
 
     if (!res.ok) {
       const message =
-        json?.errors?.[0]?.message ||
-        "Could not place bid. Please try again.";
+        json?.errors?.[0]?.message || "Could not place bid. Please try again.";
       showBidAlert("danger", message);
       return;
     }

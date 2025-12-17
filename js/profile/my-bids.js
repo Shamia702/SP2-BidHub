@@ -76,23 +76,16 @@ function getListingThumbFromBid(bid) {
 }
 
 function getHighestBid(bid) {
-  const listingBids = Array.isArray(bid.listing?.bids)
-    ? bid.listing.bids
-    : [];
+  const listingBids = Array.isArray(bid.listing?.bids) ? bid.listing.bids : [];
   if (!listingBids.length) return 0;
-  return listingBids.reduce(
-    (max, b) => (b.amount > max ? b.amount : max),
-    0
-  );
+  return listingBids.reduce((max, b) => (b.amount > max ? b.amount : max), 0);
 }
 
 async function fetchMyBids(name) {
   const token = getToken();
 
   const res = await fetch(
-    `${AUCTION_URL}/profiles/${encodeURIComponent(
-      name
-    )}/bids?_listings=true`,
+    `${AUCTION_URL}/profiles/${encodeURIComponent(name)}/bids?_listings=true`,
     {
       headers: {
         "X-Noroff-API-Key": API_KEY,
@@ -104,9 +97,7 @@ async function fetchMyBids(name) {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load your bids."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not load your bids.");
   }
 
   return Array.isArray(json.data) ? json.data : [];
@@ -143,9 +134,7 @@ function buildBidCard(bid) {
   const timeText = endsAt ? formatTimeRemaining(endsAt) : "No end time";
   const highestBid = getHighestBid(bid);
 
-  const createdText = bid.created
-    ? new Date(bid.created).toLocaleString()
-    : "";
+  const createdText = bid.created ? new Date(bid.created).toLocaleString() : "";
 
   return `
     <div class="col-md-6 col-lg-4">

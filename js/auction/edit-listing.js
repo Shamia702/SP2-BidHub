@@ -64,9 +64,7 @@ async function fetchListing() {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not load listing."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not load listing.");
   }
 
   return json.data;
@@ -91,9 +89,7 @@ async function updateListing(payload) {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(
-      json?.errors?.[0]?.message || "Could not update listing."
-    );
+    throw new Error(json?.errors?.[0]?.message || "Could not update listing.");
   }
 
   return json.data;
@@ -120,8 +116,7 @@ async function deleteListing() {
 
   if (!res.ok) {
     const json = await res.json().catch(() => null);
-    const message =
-      json?.errors?.[0]?.message || "Could not delete listing.";
+    const message = json?.errors?.[0]?.message || "Could not delete listing.";
     throw new Error(message);
   }
 
@@ -243,13 +238,9 @@ async function initEditListing() {
 
   try {
     const listing = await fetchListing();
-    const sellerName =
-      listing.seller?.name || listing.seller?.username || "";
+    const sellerName = listing.seller?.name || listing.seller?.username || "";
     if (sellerName && sellerName !== user.name) {
-      showAlert(
-        "danger",
-        "You can only edit listings that you created."
-      );
+      showAlert("danger", "You can only edit listings that you created.");
       if (form) form.classList.add("d-none");
       return;
     }
