@@ -128,5 +128,4 @@ npm run dev
 
 1. Open the folder in **Visual Studio Code**.
 2. Install the **Live Server** extension if you don’t have it already.
-3. Open the terminal in VS Code and run the following commands:
-````
+3. Right-click index.html →**Open with Live Server**.
