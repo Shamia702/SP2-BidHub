@@ -13,9 +13,9 @@ function requireAuth() {
 }
 
 function getAvatarUrlFromProfile(profile) {
-  if (profile.avatar && typeof profile.avatar === "string") {
-    return profile.avatar;
-  }
+  if (!profile) return null;
+
+  if (typeof profile.avatar === "string") return profile.avatar;
   if (profile.avatar && typeof profile.avatar === "object") {
     return profile.avatar.url || null;
   }
@@ -23,9 +23,9 @@ function getAvatarUrlFromProfile(profile) {
 }
 
 function getBannerUrlFromProfile(profile) {
-  if (profile.banner && typeof profile.banner === "string") {
-    return profile.banner;
-  }
+  if (!profile) return null;
+
+  if (typeof profile.banner === "string") return profile.banner;
   if (profile.banner && typeof profile.banner === "object") {
     return profile.banner.url || null;
   }
@@ -139,7 +139,6 @@ function renderProfileHeader(profile) {
             </div>
           </div>
 
-          <!-- Right: Edit profile button -->
           <a href="/profile/edit-profile.html" class="bh-btn-outline btn-sm">
             Edit profile
           </a>
@@ -148,7 +147,6 @@ function renderProfileHeader(profile) {
     </article>
   `;
 }
-
 function renderProfileBio(profile) {
   const container = document.querySelector("#profile-bio");
   if (!container) return;
@@ -164,8 +162,6 @@ function renderProfileBio(profile) {
     </article>
   `;
 }
-
-
 
 function renderProfileActivity(profile, bids) {
   const container = document.querySelector("#profile-activity");
@@ -189,6 +185,7 @@ function renderProfileActivity(profile, bids) {
 
   container.innerHTML = `
     <div class="d-flex flex-column gap-3">
+      <!-- Recent listing -->
       <article class="bh-card p-3 p-lg-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div>
@@ -215,7 +212,11 @@ function renderProfileActivity(profile, bids) {
                     <div class="bh-profile-thumb">
                       ${
                         thumb
-                          ? `<img src="${thumb.url}" alt="${thumb.alt || recentListing.title || "Listing image"}" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
+                          ? `<img src="${thumb.url}" alt="${
+                              thumb.alt ||
+                              recentListing.title ||
+                              "Listing image"
+                            }" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
                           : `<span class="small">Image</span>`
                       }
                     </div>
@@ -243,6 +244,7 @@ function renderProfileActivity(profile, bids) {
         }
       </article>
 
+      <!-- Recent bid -->
       <article class="bh-card p-3 p-lg-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div>
@@ -272,7 +274,9 @@ function renderProfileActivity(profile, bids) {
                     <div class="bh-profile-thumb">
                       ${
                         thumb
-                          ? `<img src="${thumb.url}" alt="${thumb.alt || listingTitle || "Listing image"}" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
+                          ? `<img src="${thumb.url}" alt="${
+                              thumb.alt || listingTitle || "Listing image"
+                            }" class="img-fluid w-100 h-100" style="object-fit:cover;" />`
                           : `<span class="small">Image</span>`
                       }
                     </div>
@@ -320,6 +324,7 @@ async function loadProfile() {
       fetchProfile(user.name),
       fetchProfileBids(user.name),
     ]);
+
     updateUser({
       name: profile.name,
       email: profile.email,

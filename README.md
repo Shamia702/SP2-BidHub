@@ -113,18 +113,19 @@ cd SP2-BidHub
 code .
 ```
 
-
 ### 2. Install dependencies
 
 ```bash
 npm install
 ```
+
 ### 3. Run Sass in development mode
 
 ```bash
 npm run dev
 ```
-###  Open the project in VS Code
+
+### Open the project in VS Code
 
 1. Open the folder in **Visual Studio Code**.
 2. Install the **Live Server** extension if you don’t have it already.
