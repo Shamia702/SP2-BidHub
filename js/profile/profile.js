@@ -165,48 +165,7 @@ function renderProfileBio(profile) {
   `;
 }
 
-function renderProfileSummary(profile, bids) {
-  const container = document.querySelector("#profile-summary");
-  if (!container) return;
 
-  const listings = Array.isArray(profile.listings) ? profile.listings : [];
-  const totalListings = listings.length;
-  const totalBids = Array.isArray(bids) ? bids.length : 0;
-  const credits = typeof profile.credits === "number" ? profile.credits : 0;
-
-  container.innerHTML = `
-    <article class="bh-card p-3 p-lg-4">
-      <h2 class="h6 mb-2">Summary</h2>
-
-      <div class="mb-2 small">
-        <div class="d-flex justify-content-between">
-          <span>Credits</span>
-          <strong>${credits}</strong>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Total listings</span>
-          <strong>${totalListings}</strong>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Total bids</span>
-          <strong>${totalBids}</strong>
-        </div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2 mt-2">
-       <a href="/auction/create-listing.html" class="bh-btn-primary">
-            Create listing
-          </a>
-        <a href="/profile/my-listings.html" class="bh-btn-outline btn-sm">
-          My listings
-        </a>
-        <a href="/profile/my-bids.html" class="bh-btn-outline btn-sm">
-          My bids
-        </a>
-      </div>
-    </article>
-  `;
-}
 
 function renderProfileActivity(profile, bids) {
   const container = document.querySelector("#profile-activity");
@@ -230,7 +189,6 @@ function renderProfileActivity(profile, bids) {
 
   container.innerHTML = `
     <div class="d-flex flex-column gap-3">
-      <!-- Recent listing -->
       <article class="bh-card p-3 p-lg-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div>
@@ -372,10 +330,8 @@ async function loadProfile() {
     });
 
     renderHeader();
-
     renderProfileHeader(profile);
     renderProfileBio(profile);
-    renderProfileSummary(profile, bids);
     renderProfileActivity(profile, bids);
   } catch (error) {
     console.error(error);
