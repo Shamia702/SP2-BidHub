@@ -3,6 +3,8 @@
 BidHub is a semester project built for the Noroff Auction API.  
 It’s a student-only auction platform where users can register with their `@stud.noroff.no` email, create listings, and bid using credits instead of cash.
 
+![BidHub screenshot](images/bidhub.jpg)
+
 ---
 
 ## Features
@@ -130,3 +132,10 @@ npm run dev
 1. Open the folder in **Visual Studio Code**.
 2. Install the **Live Server** extension if you don’t have it already.
 3. Right-click index.html →**Open with Live Server**.
+
+---
+
+## Contact
+
+- [My LinkedIn page](https://www.linkedin.com/in/shamia-shamia-6892a81a2/)
+- [My GitHub page](https://github.com/Shamia702)
